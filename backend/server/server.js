@@ -1,17 +1,26 @@
-const express = require("express");
-const app = express();
-const cors = require('cors')
-
-const dbConnection = require('./config/db.config')
-
-
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
 require('dotenv').config();
-const SERVER_PORT = 8081
+const mbtaRoutes = require('./routes/liveRoutes');
 
-dbConnection()
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-
-
-app.listen(SERVER_PORT, (req, res) => {
-    console.log(`The backend service is running on port ${SERVER_PORT} and waiting for requests.`);
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
 })
+    .then(() => console.log("Connected to MongoDB"))
+    .catch(err => console.error("MongoDB connection error:", err));
+
+// Routes
+app.use('/routes', mbtaRoutes);
+
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
