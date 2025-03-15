@@ -1,8 +1,8 @@
-####################################
-# 🚀 USER MANAGEMENT API TESTS
-####################################
 
-### ✅ User Signup (Create Account)
+#  USER MANAGEMENT API TESTS
+
+
+###  User Signup (Create Account)
 POST http://localhost:8081/user/signup
 Content-Type: application/json 
 
@@ -13,7 +13,7 @@ Content-Type: application/json
     "city": "Boston"
 }
 
-### ✅ User Login (Authenticate User)
+###  User Login (Authenticate User)
 POST http://localhost:8081/user/login
 Content-Type: application/json 
 
@@ -22,11 +22,11 @@ Content-Type: application/json
     "password": "tochi12345"
 }
 
-### ✅ Get All Users
+###  Get All Users
 GET http://localhost:8081/user/getAll
 Content-Type: application/json
 
-### ✅ Edit User Profile
+###  Edit User Profile
 PUT http://localhost:8081/user/editUser
 Content-Type: application/json 
 
@@ -38,40 +38,38 @@ Content-Type: application/json
     "city": "Cambridge"
 }
 
-### ✅ Get User by ID (Example: Boston-based User)
+###  Get User by ID (Example: Boston-based User)
 GET http://localhost:8081/user/getUserById/635ab8dfc407faf9f73deaf1
 Content-Type: application/json 
 
-### ✅ Delete All Users (⚠ Use with caution!)
+###  Delete All Users (⚠ Use with caution!)
 DELETE http://localhost:8081/user/deleteAll
 Content-Type: application/json 
 
 
-####################################
-# 🚆 MBTA ROUTES API TESTS
-####################################
+# MBTA ROUTES API TESTS
 
-### ✅ Get all MBTA live routes (Live API)
+###  Get all MBTA live routes (Live API)
 GET http://localhost:8081/routes/mbta-routes
 Content-Type: application/json
 
-### ✅ Get a specific MBTA route (Example: Red Line)
+###  Get a specific MBTA route (Example: Red Line)
 GET http://localhost:8081/routes/mbta-routes?id=Red
 Content-Type: application/json
 
-### ✅ Get Blue Line Route
+###  Get Blue Line Route
 GET http://localhost:8081/routes/mbta-routes?id=Blue
 Content-Type: application/json
 
-### ✅ Get Green Line Route
+###  Get Green Line Route
 GET http://localhost:8081/routes/mbta-routes?id=Green
 Content-Type: application/json
 
-### ✅ Get Orange Line Route
+###  Get Orange Line Route
 GET http://localhost:8081/routes/mbta-routes?id=Orange
 Content-Type: application/json
 
-### ✅ Update Red Line Route (Successful)
+###  Update Red Line Route (Successful)
 PUT http://localhost:8081/routes/mbta-routes/Red
 Content-Type: application/json
 
@@ -84,7 +82,7 @@ Content-Type: application/json
     "direction_names": ["Alewife", "Ashmont/Braintree"]
 }
 
-### ✅ Update Blue Line Route
+###  Update Blue Line Route
 PUT http://localhost:8081/routes/mbta-routes/Blue
 Content-Type: application/json
 
@@ -97,7 +95,7 @@ Content-Type: application/json
     "direction_names": ["Wonderland", "Bowdoin"]
 }
 
-### ✅ Update Green Line Route
+###  Update Green Line Route
 PUT http://localhost:8081/routes/mbta-routes/Green
 Content-Type: application/json
 
@@ -110,7 +108,7 @@ Content-Type: application/json
     "direction_names": ["Lechmere", "Boston College"]
 }
 
-### ✅ Update Orange Line Route
+###  Update Orange Line Route
 PUT http://localhost:8081/routes/mbta-routes/Orange
 Content-Type: application/json
 
@@ -123,7 +121,7 @@ Content-Type: application/json
     "direction_names": ["Forest Hills", "Oak Grove"]
 }
 
-### ❌ Test with Missing Route ID (Should fail)
+###  Test with Missing Route ID (Should fail)
 PUT http://localhost:8081/routes/mbta-routes/
 Content-Type: application/json
 
@@ -132,13 +130,13 @@ Content-Type: application/json
     "city": "Boston"
 }
 
-### ❌ Test with No Update Data (Should fail)
+###  Test with No Update Data (Should fail)
 PUT http://localhost:8081/routes/mbta-routes/yourRouteId
 Content-Type: application/json
 
 {}
 
-### ❌ Test with Non-Existent Route ID (Should return 404)
+###  Test with Non-Existent Route ID (Should return 404)
 PUT http://localhost:8081/routes/mbta-routes/000000000000000000000000
 Content-Type: application/json
 
