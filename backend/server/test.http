@@ -1,0 +1,2 @@
+### Get all MBTA routes
+GET http://localhost:8081/routes/mbta-routes HTTP/1.1

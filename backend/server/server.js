@@ -19,7 +19,7 @@ app.use(express.json());
 
 // Routes
 app.use('/routes', mbtaRoutes); // Handles GET requests
-app.use('/routes', updateRoutes); // Handles PUT requests
+
 
 const PORT = 8081;
 app.listen(PORT, () => {
