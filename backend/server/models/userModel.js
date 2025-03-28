@@ -1,4 +1,4 @@
-const mongoose = require("mongoose"); //test
+const mongoose = require("mongoose");
 
 //user schema/model
 const newUserSchema = new mongoose.Schema(
