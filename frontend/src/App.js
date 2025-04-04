@@ -11,6 +11,7 @@ import HomePage from "./components/pages/homePage";
 import Login from "./components/pages/loginPage";
 import Signup from "./components/pages/registerPage";
 import PrivateUserProfile from "./components/pages/privateUserProfilePage";
+import Alerts from "./components/pages/alertsPage";
 import { createContext, useState, useEffect } from "react";
 import getUserInfo from "./utilities/decodeJwt";
 
@@ -33,6 +34,7 @@ const App = () => {
           <Route exact path="/home" element={<HomePage />} />
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/signup" element={<Signup />} />
+          <Route exact path="/alerts" element={<Alerts/>} />
           <Route path="/privateUserProfile" element={<PrivateUserProfile />} />
         </Routes>
       </UserContext.Provider>
