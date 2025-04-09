@@ -3,10 +3,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
 
+// Route Imports
 const subwayRoutes = require('./routes/Subway_Routes');
 const subwayStations = require('./routes/Subway_Stations');
 const subwayArrivals = require('./routes/Subway_Arrivals');
-const userRoutes = require('./routes/User_Routes' );
+const userRoutes = require('./routes/userRoutes'); // Обновлённый маршрут
 
 const app = express();
 
@@ -26,9 +27,9 @@ mongoose.connect(process.env.DB_URL, {
 app.use('/api/lines', subwayRoutes);
 app.use('/api/stations', subwayStations);
 app.use('/api/arrivals', subwayArrivals);
-app.use('/user', userRoutes);
+app.use('/api/users', userRoutes); // Новый путь: /api/users вместо /user
 
-// Server port
+// Server Port
 const PORT = process.env.PORT || 8081;
 app.listen(PORT, () => {
   console.log(` Server running on port ${PORT}`);

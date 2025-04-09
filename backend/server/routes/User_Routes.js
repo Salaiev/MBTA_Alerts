@@ -1,19 +1,19 @@
-console.log(" userRoutes.js is loaded");
+console.log("userRoutes.js is loaded");
 
 const express = require('express');
 const router = express.Router();
 const User = require('../models/userModel');
 
-//  Signup
+// Create User
 router.post('/signup', async (req, res) => {
   try {
-    const { username, email, password, city, preferredRoute } = req.body;
+    const { name, lastname, email, password } = req.body;
 
-    if (!username || !email || !password || !city) {
+    if (!name || !lastname || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const user = new User({ username, email, password, city, preferredRoute });
+    const user = new User({ name, lastname, email, password });
     await user.save();
 
     res.status(201).json({ message: 'User created', user });
@@ -23,12 +23,12 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-//  Login
+// Login
 router.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
 
-    const user = await User.findOne({ username, password }); // WARNING: Hash in production
+    const user = await User.findOne({ email, password }); // WARNING: no hashing here
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -40,25 +40,14 @@ router.post('/login', async (req, res) => {
   }
 });
 
-//  Get All Users
-router.get('/getAll', async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to fetch users' });
-  }
-});
-
-//  Update User
+// Update User
 router.put('/editUser/:id', async (req, res) => {
   try {
-    const userId = req.params.id;
-    const { username, email, password, city, preferredRoute } = req.body;
+    const { name, lastname, email, password } = req.body;
 
     const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { username, email, password, city, preferredRoute },
+      req.params.id,
+      { name, lastname, email, password },
       { new: true }
     );
 
@@ -72,32 +61,7 @@ router.put('/editUser/:id', async (req, res) => {
   }
 });
 
-//  Get User by ID
-router.get('/getUserById/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to retrieve user' });
-  }
-});
-
-//  Delete All Users
-router.delete('/deleteAll', async (req, res) => {
-  try {
-    await User.deleteMany({});
-    res.json({ message: 'All users deleted' });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete users' });
-  }
-});
-
-//  Delete by ID
+// Delete User
 router.delete('/deleteUser/:id', async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);

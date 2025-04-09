@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  username: { 
+  name: { 
+    type: String, 
+    required: true 
+  },
+  lastname: { 
     type: String, 
     required: true 
   },
@@ -14,21 +18,10 @@ const userSchema = new mongoose.Schema({
     type: String, 
     required: true,
     minlength: 8
-  },
-  city: { 
-    type: String, 
-    required: true 
-  },
-  preferredRoute: { 
-    type: String 
-  },
-  date: {
-    type: Date,
-    default: Date.now
   }
 }, { 
   timestamps: true,
   collection: "users"
 });
 
-module.exports = mongoose.model('userModel', userSchema);
+module.exports = mongoose.model('User', userSchema);
