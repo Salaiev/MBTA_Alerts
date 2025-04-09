@@ -6,7 +6,7 @@ require('dotenv').config();
 const subwayRoutes = require('./routes/Subway_Routes');
 const subwayStations = require('./routes/Subway_Stations');
 const subwayArrivals = require('./routes/Subway_Arrivals');
-const userRoutes = require('./routes/userRoutes'); 
+const userRoutes = require('./routes/User_Routes' );
 
 const app = express();
 
@@ -26,7 +26,7 @@ mongoose.connect(process.env.DB_URL, {
 app.use('/api/lines', subwayRoutes);
 app.use('/api/stations', subwayStations);
 app.use('/api/arrivals', subwayArrivals);
-app.use('/user', userRoutes); 
+app.use('/user', userRoutes);
 
 // Server port
 const PORT = process.env.PORT || 8081;
