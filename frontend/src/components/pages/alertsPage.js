@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'; //rename
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import axios from 'axios';
+import { formatDistanceToNow } from 'date-fns';
 import '../../css/alerts.css';
 
 function Alerts() {
@@ -25,7 +26,7 @@ function Alerts() {
       try {
         setLoading(true);
         const result = await axios.get(
-          'https://api-v3.mbta.com/alerts?sort=-updated_at&fields%5Balert%5D=header%2Ceffect-name%2Cseverity&include=stops&filter%5Bactivity%5D=BOARD%2CEXIT%2CRIDE'
+          'https://api-v3.mbta.com/alerts?sort=-updated_at&fields%5Balert%5D=header%2Ceffect-name%2Cseverity%2Cupdated_at&include=stops&filter%5Bactivity%5D=BOARD%2CEXIT%2CRIDE'
         );
         setAlerts(result.data.data);
         setError(null);
@@ -43,6 +44,14 @@ function Alerts() {
 
   const filteredAlerts = alerts.filter(alert => {
     const header = alert.attributes.header?.toLowerCase() || '';
+    const updatedAt = alert.attributes.updated_at ? new Date(alert.attributes.updated_at) : null;
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+    // Filter out alerts older than 1 month
+    if (updatedAt && updatedAt < oneMonthAgo) {
+      return false;
+    }
 
     if (!selectedType && !selectedLine && !busSearch) return true;
 
@@ -136,6 +145,7 @@ function Alerts() {
           <p className="no-alerts">No alerts match your current filters.</p>
         ) : (
           filteredAlerts.map(alert => (
+            
             <Card
               key={alert.id}
               className={`alert-card ${getSeverityClass(alert.attributes.severity)}`}
@@ -147,6 +157,11 @@ function Alerts() {
                 <Card.Text>{alert.attributes.header}</Card.Text>
                 <div className="alert-severity">
                   Severity: {alert.attributes.severity}
+                </div>
+                <div className="alert-updated">
+                  {alert.attributes.updated_at
+                    ? `Updated ${formatDistanceToNow(new Date(alert.attributes.updated_at), { addSuffix: true })}`
+                    : 'Update time unknown'}
                 </div>
               </Card.Body>
             </Card>
