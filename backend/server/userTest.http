@@ -73,4 +73,4 @@ Content-Type: application/json
 ###
 
 ###  Delete Favorite Route
-DELETE http://localhost:8081/api/favorite-routes/67fce98d501398e431a4092b/67fceedb2ee85c2de9770b33
+DELETE http://localhost:8081/api/favorite-routes/67fcedbdbac936d3b8cd0b09
