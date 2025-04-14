@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+const favoriteRouteSchema = new mongoose.Schema({
+  fromStation: { type: String, required: true },
+  toStation: { type: String, required: true },
+  routeName: { type: String }
+}, { _id: true }); // разрешаем MongoDB создавать _id для каждого маршрута
+
 const userSchema = new mongoose.Schema({
   name: { 
     type: String, 
@@ -8,6 +14,11 @@ const userSchema = new mongoose.Schema({
   lastname: { 
     type: String, 
     required: true 
+  },
+  username: {
+    type: String,
+    required: true,
+    unique: true
   },
   email: { 
     type: String, 
@@ -18,7 +29,8 @@ const userSchema = new mongoose.Schema({
     type: String, 
     required: true,
     minlength: 8
-  }
+  },
+  favoriteRoutes: [favoriteRouteSchema]
 }, { 
   timestamps: true,
   collection: "users"
