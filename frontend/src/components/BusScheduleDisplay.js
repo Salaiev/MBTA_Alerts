@@ -47,5 +47,5 @@ const BusScheduleDisplay = ({ stopId }) => {
     </div>
   );
 };
-
+/// The BusScheduleDisplay component fetches and displays the bus schedule for a given stop ID
 export default BusScheduleDisplay;

@@ -20,7 +20,7 @@ const MainSchedule = () => {
   const [selectedBusStopId, setSelectedBusStopId] = useState('');
 
 
-
+ // Bus state
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-start pt-10 px-4">
       <div className="w-full max-w-xl bg-white rounded-xl shadow p-6 space-y-6">
@@ -34,7 +34,14 @@ const MainSchedule = () => {
             className={`px-4 py-2 rounded-lg ${
               mode === 'train' ? 'bg-blue-600 text-white' : 'bg-gray-200'
             }`}
-            onClick={() => setMode('train')}
+            onClick={() => {
+              if (mode !== 'train') {
+                setMode('train');
+                // 🧼 Reset all bus state
+                setBusRouteId('');
+                setSelectedBusStopId('');
+              }
+            }}
           >
             Train
           </button>
@@ -42,7 +49,15 @@ const MainSchedule = () => {
             className={`px-4 py-2 rounded-lg ${
               mode === 'bus' ? 'bg-blue-600 text-white' : 'bg-gray-200'
             }`}
-            onClick={() => setMode('bus')}
+            onClick={() => {
+              if (mode !== 'bus') {
+                setMode('bus');
+                // 🧼 Reset all train state
+                setSelectedLineId('');
+                setSelectedStationId('');
+                setDirection('0');
+            }}
+          }
           >
             Bus
           </button>
