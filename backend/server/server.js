@@ -9,7 +9,11 @@ const subwayStations = require('./routes/Subway_Stations');
 const subwayArrivals = require('./routes/Subway_Arrivals');
 const userRoutes = require('./routes/User_Routes' );
 const busStops = require('./routes/BusStops');
+<<<<<<< HEAD
 favoriteRoutes = require('./routes/favoriteRoutes');
+=======
+const favoriteRoutes = require('./routes/favoriteRoutes');
+>>>>>>> e1f0eeeeceaf38d498ba74d523fc002ab84e0e36
 
 
 

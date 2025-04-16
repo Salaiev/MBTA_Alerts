@@ -9,32 +9,36 @@ const PrivateUserProfile = () => {
   const [user, setUser] = useState(null);
   const [showLogout, setShowLogout] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
-  const [newRoute, setNewRoute] = useState({
-    fromStation: "",
-    toStation: "",
-    routeName: ""
-  });
-  const [settings, setSettings] = useState({ name: "", password: "" });
+  const [settings, setSettings] = useState({ name: "", lastName: "", currentPassword: "", newPassword: "" });
+
   const [lines, setLines] = useState([]);
-  const [fromStations, setFromStations] = useState([]);
-  const [toStations, setToStations] = useState([]);
   const [fromLine, setFromLine] = useState("");
   const [toLine, setToLine] = useState("");
+  const [fromStations, setFromStations] = useState([]);
+  const [toStations, setToStations] = useState([]);
+
+  const [newRoute, setNewRoute] = useState({ fromStation: "", toStation: "", routeName: "" });
+  const [savedRoutes, setSavedRoutes] = useState([]);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const userInfo = getUserInfo();
     setUser(userInfo);
-    setSettings({ name: userInfo.name, password: "" });
+    setSettings({ name: userInfo.name, lastName: userInfo.lastname || "", currentPassword: "", newPassword: "" });
+
+    const saved = JSON.parse(localStorage.getItem("savedRoutes")) || [];
+    setSavedRoutes(saved);
+
+    fetchLines();
   }, []);
 
   const fetchLines = async () => {
     try {
-      const response = await axios.get("https://api-v3.mbta.com/routes?filter[type]=0,1");
-      const lineList = response.data.data.map(line => ({ id: line.id, name: line.attributes.long_name }));
-      setLines(lineList);
+      const res = await axios.get("https://api-v3.mbta.com/routes?filter[type]=0,1");
+      const lines = res.data.data.map(route => ({ id: route.id, name: route.attributes.long_name }));
+      setLines(lines);
     } catch (err) {
       console.error("Failed to fetch lines:", err);
     }
@@ -42,13 +46,32 @@ const PrivateUserProfile = () => {
 
   const fetchStationsForLine = async (lineId, target) => {
     try {
-      const response = await axios.get(`https://api-v3.mbta.com/stops?filter[route]=${lineId}`);
-      const stationList = response.data.data.map(stop => ({ id: stop.id, name: stop.attributes.name }));
-      if (target === "from") setFromStations(stationList);
-      else setToStations(stationList);
+      const res = await axios.get(`https://api-v3.mbta.com/stops?filter[route]=${lineId}`);
+      const stations = res.data.data.map(stop => ({ id: stop.id, name: stop.attributes.name }));
+      if (target === "from") setFromStations(stations);
+      else setToStations(stations);
     } catch (err) {
-      console.error("Failed to fetch stations for line:", err);
+      console.error("Failed to fetch stations:", err);
     }
+  };
+
+  const handleAddRoute = () => {
+    if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName) return;
+
+    const updatedRoutes = [...savedRoutes, newRoute];
+    setSavedRoutes(updatedRoutes);
+    localStorage.setItem('savedRoutes', JSON.stringify(updatedRoutes));
+
+    setNewRoute({ fromStation: "", toStation: "", routeName: "" });
+    setFromLine("");
+    setToLine("");
+    setShowAddModal(false);
+  };
+
+  const handleDeleteRoute = (indexToDelete) => {
+    const updated = savedRoutes.filter((_, i) => i !== indexToDelete);
+    setSavedRoutes(updated);
+    localStorage.setItem("savedRoutes", JSON.stringify(updated));
   };
 
   const handleLogout = () => {
@@ -56,80 +79,40 @@ const PrivateUserProfile = () => {
     navigate("/");
   };
 
-  const handleAddRoute = async () => {
-    if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName) return;
-    try {
-      const response = await axios.post(
-        `http://localhost:8081/api/favorite-routes/${user.id}`, // Use user.id instead of user._id
-        newRoute
-      );
-      
-      // Update the user state with new favorite routes
-      setUser(prev => ({
-        ...prev,
-        favoriteRoutes: [...prev.favoriteRoutes, response.data]
-      }));
-      
-      setNewRoute({ fromStation: "", toStation: "", routeName: "" });
-      setFromLine("");
-      setToLine("");
-      setShowAddModal(false);
-    } catch (err) {
-      console.error("Failed to add route:", err);
-      alert("Failed to save route. Please check the console for details.");
-    }
-  };
-
-  const handleDeleteRoute = async (routeId) => {
-    try {
-      await axios.delete(`http://localhost:8081/api/favorite-routes/${user._id}/${routeId}`);
-      setUser(prev => ({
-        ...prev,
-        favoriteRoutes: prev.favoriteRoutes.filter(route => route._id !== routeId),
-      }));
-    } catch (err) {
-      console.error("Failed to delete route:", err);
-    }
-  };
-
   const handleSettingsSave = () => {
-    setUser(prev => ({ ...prev, name: settings.name }));
+    setUser(prev => ({ ...prev, name: settings.name, lastname: settings.lastName }));
     setShowSettingsModal(false);
-  };
-
-  const openAddModal = () => {
-    fetchLines();
-    setShowAddModal(true);
+    // Optionally update password logic here if desired
   };
 
   if (!user) return <div><h4>Log in to view this page.</h4></div>;
 
   return (
-    <div style={{ display: "flex", justifyContent: "center", marginTop: "30px" }}>
-      <div style={{ background: "#fff", padding: "30px", borderRadius: "20px", width: "400px", textAlign: "center", boxShadow: "0 5px 15px rgba(0,0,0,0.1)" }}>
-        <div style={{ width: "100px", height: "100px", borderRadius: "50%", backgroundColor: "#0d6efd", color: "white", margin: "auto", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "32px" }}>
+    <div className="d-flex justify-content-center mt-4">
+      <div className="bg-white p-4 rounded-4 shadow" style={{ width: "400px" }}>
+        <div className="mx-auto rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style={{ width: 100, height: 100, fontSize: 32 }}>
           {user?.name?.[0] || "U"}
         </div>
-        <h4 className="mt-3">{user.name}</h4>
+        <h4 className="mt-3">{user.name} {user.lastname}</h4>
         <p className="text-muted">@{user.username}</p>
 
-        <div className="mt-4" style={{ textAlign: "left" }}>
-          <h5>Favorite Routes</h5>
-          {user.favoriteRoutes && user.favoriteRoutes.length > 0 ? (
+        <div className="mt-4 text-start">
+          <h5>Saved Routes</h5>
+          {savedRoutes.length > 0 ? (
             <ul className="list-unstyled">
-              {user.favoriteRoutes.map(route => (
-                <li key={route._id} className="mb-2 p-2 bg-light rounded shadow-sm">
+              {savedRoutes.map((route, index) => (
+                <li key={index} className="mb-2 p-2 bg-light rounded shadow-sm">
                   <strong>{route.routeName}</strong><br />
                   {route.fromStation} → {route.toStation}
+                  <Button size="sm" variant="outline-danger" className="ms-2" onClick={() => handleDeleteRoute(index)}>Delete</Button>
                 </li>
               ))}
             </ul>
-          ) : <p>No favorite routes yet.</p>}
+          ) : <p>No routes saved.</p>}
         </div>
 
         <div className="mt-3">
-          <Button className="me-2" onClick={openAddModal}>Add Route</Button>
-          <Button variant="outline-secondary" onClick={() => setShowEditModal(true)}>Edit Routes</Button>
+          <Button onClick={() => setShowAddModal(true)}>Add Route</Button>
         </div>
 
         <Button className="mt-3" variant="info" onClick={() => setShowSettingsModal(true)}>Settings</Button>
@@ -137,39 +120,33 @@ const PrivateUserProfile = () => {
 
         {/* Add Modal */}
         <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
-          <Modal.Header closeButton><Modal.Title>Add Favorite Route</Modal.Title></Modal.Header>
+          <Modal.Header closeButton><Modal.Title>Add Route</Modal.Title></Modal.Header>
           <Modal.Body>
             <label>From Line</label>
             <select className="form-control mb-2" value={fromLine} onChange={(e) => { setFromLine(e.target.value); fetchStationsForLine(e.target.value, "from"); }}>
               <option value="">Select Line</option>
-              {lines.map(line => (
-                <option key={line.id} value={line.id}>{line.name}</option>
-              ))}
+              {lines.map(line => <option key={line.id} value={line.id}>{line.name}</option>)}
             </select>
+
             <label>From Station</label>
             <select className="form-control mb-2" value={newRoute.fromStation} onChange={(e) => setNewRoute({ ...newRoute, fromStation: e.target.value })}>
               <option value="">Select Station</option>
-              {fromStations.map(station => (
-                <option key={station.id} value={station.name}>{station.name}</option>
-              ))}
+              {fromStations.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
             </select>
 
             <label>To Line</label>
             <select className="form-control mb-2" value={toLine} onChange={(e) => { setToLine(e.target.value); fetchStationsForLine(e.target.value, "to"); }}>
               <option value="">Select Line</option>
-              {lines.map(line => (
-                <option key={line.id} value={line.id}>{line.name}</option>
-              ))}
+              {lines.map(line => <option key={line.id} value={line.id}>{line.name}</option>)}
             </select>
+
             <label>To Station</label>
             <select className="form-control mb-2" value={newRoute.toStation} onChange={(e) => setNewRoute({ ...newRoute, toStation: e.target.value })}>
               <option value="">Select Station</option>
-              {toStations.map(station => (
-                <option key={station.id} value={station.name}>{station.name}</option>
-              ))}
+              {toStations.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
             </select>
 
-            <input type="text" placeholder="Label Name (e.g., Work)" className="form-control" value={newRoute.routeName} onChange={(e) => setNewRoute({ ...newRoute, routeName: e.target.value })} />
+            <input type="text" placeholder="Label (e.g. Work)" className="form-control" value={newRoute.routeName} onChange={(e) => setNewRoute({ ...newRoute, routeName: e.target.value })} />
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowAddModal(false)}>Close</Button>
@@ -177,29 +154,14 @@ const PrivateUserProfile = () => {
           </Modal.Footer>
         </Modal>
 
-        {/* Edit Modal */}
-        <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
-          <Modal.Header closeButton><Modal.Title>Edit/Delete Favorite Routes</Modal.Title></Modal.Header>
-          <Modal.Body>
-            {user.favoriteRoutes && user.favoriteRoutes.map((route) => (
-              <div key={route._id} className="mb-3 p-2 border rounded">
-                <div><strong>{route.routeName}</strong></div>
-                <div>{route.fromStation} → {route.toStation}</div>
-                <Button variant="danger" size="sm" className="mt-2" onClick={() => handleDeleteRoute(route._id)}>Delete</Button>
-              </div>
-            ))}
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowEditModal(false)}>Close</Button>
-          </Modal.Footer>
-        </Modal>
-
         {/* Settings Modal */}
         <Modal show={showSettingsModal} onHide={() => setShowSettingsModal(false)}>
           <Modal.Header closeButton><Modal.Title>Update Profile</Modal.Title></Modal.Header>
           <Modal.Body>
-            <input type="text" placeholder="Name" className="form-control mb-2" value={settings.name} onChange={(e) => setSettings({ ...settings, name: e.target.value })} />
-            <input type="password" placeholder="New Password" className="form-control" value={settings.password} onChange={(e) => setSettings({ ...settings, password: e.target.value })} />
+            <input type="text" placeholder="First Name" className="form-control mb-2" value={settings.name} onChange={(e) => setSettings({ ...settings, name: e.target.value })} />
+            <input type="text" placeholder="Last Name" className="form-control mb-2" value={settings.lastName} onChange={(e) => setSettings({ ...settings, lastName: e.target.value })} />
+            <input type="password" placeholder="Current Password" className="form-control mb-2" value={settings.currentPassword} onChange={(e) => setSettings({ ...settings, currentPassword: e.target.value })} />
+            <input type="password" placeholder="New Password" className="form-control" value={settings.newPassword} onChange={(e) => setSettings({ ...settings, newPassword: e.target.value })} />
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={() => setShowSettingsModal(false)}>Cancel</Button>

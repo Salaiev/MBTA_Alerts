@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'; //rename
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
+import { formatDistanceToNow } from 'date-fns';
+import getUserInfo from '../../utilities/decodeJwt';
 import '../../css/alerts.css';
 
 function Alerts() {
@@ -12,6 +15,8 @@ function Alerts() {
   const [busSearch, setBusSearch] = useState('');
   const [loading, setLoading,] = useState(true);
   const [error, setError] = useState(null);
+  const [favoriteRoutes, setFavoriteRoutes] = useState([]);
+  const [user, setUser] = useState(null);
 
   const trainLines = [
     { id: 'red', name: 'Red Line', color: '#FA2D27' },
@@ -21,11 +26,23 @@ function Alerts() {
   ];
 
   useEffect(() => {
+    const userInfo = getUserInfo();
+    setUser(userInfo);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      const savedRoutes = JSON.parse(localStorage.getItem('savedRoutes')) || [];
+      setFavoriteRoutes(savedRoutes);
+    }
+  }, [user]);
+
+  useEffect(() => {
     async function fetchAlerts() {
       try {
         setLoading(true);
         const result = await axios.get(
-          'https://api-v3.mbta.com/alerts?sort=-updated_at&fields%5Balert%5D=header%2Ceffect-name%2Cseverity&include=stops&filter%5Bactivity%5D=BOARD%2CEXIT%2CRIDE'
+          'https://api-v3.mbta.com/alerts?sort=-updated_at&fields%5Balert%5D=header%2Ceffect-name%2Cseverity%2Cupdated_at%2Clifecycle&include=stops&filter%5Bactivity%5D=BOARD%2CEXIT%2CRIDE'
         );
         setAlerts(result.data.data);
         setError(null);
@@ -43,6 +60,14 @@ function Alerts() {
 
   const filteredAlerts = alerts.filter(alert => {
     const header = alert.attributes.header?.toLowerCase() || '';
+    const updatedAt = alert.attributes.updated_at ? new Date(alert.attributes.updated_at) : null;
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+    // Filter out alerts older than 1 month
+    if (updatedAt && updatedAt < oneMonthAgo) {
+      return false;
+    }
 
     if (!selectedType && !selectedLine && !busSearch) return true;
 
@@ -129,6 +154,32 @@ function Alerts() {
             className="bus-search"
           />
         </div>
+
+        <div className="favorites-filter">
+          <h3>Favorite Routes</h3>
+          <Dropdown>
+            <Dropdown.Toggle variant="secondary" id="favorites-dropdown">
+              Select Favorite Route
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {favoriteRoutes.length === 0 ? (
+                <Dropdown.Item disabled>No favorite routes added yet</Dropdown.Item>
+              ) : (
+                favoriteRoutes.map((route) => (
+                  <Dropdown.Item 
+                    key={route._id} 
+                    onClick={() => {
+                      setSelectedType('bus');
+                      setBusSearch(route.routeName);
+                    }}
+                  >
+                    {route.routeName} ({route.fromStation} → {route.toStation})
+                  </Dropdown.Item>
+                ))
+              )}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
       </div>
 
       <div className="alerts-grid">
@@ -136,6 +187,7 @@ function Alerts() {
           <p className="no-alerts">No alerts match your current filters.</p>
         ) : (
           filteredAlerts.map(alert => (
+            
             <Card
               key={alert.id}
               className={`alert-card ${getSeverityClass(alert.attributes.severity)}`}
@@ -147,6 +199,14 @@ function Alerts() {
                 <Card.Text>{alert.attributes.header}</Card.Text>
                 <div className="alert-severity">
                   Severity: {alert.attributes.severity}
+                </div>
+                <div className="alert-lifecycle">
+                  Status: {alert.attributes.lifecycle || 'Unknown'}
+                </div>
+                <div className="alert-updated">
+                  {alert.attributes.updated_at
+                    ? `Updated ${formatDistanceToNow(new Date(alert.attributes.updated_at), { addSuffix: true })}`
+                    : 'Update time unknown'}
                 </div>
               </Card.Body>
             </Card>
