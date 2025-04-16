@@ -32,15 +32,8 @@ function Alerts() {
 
   useEffect(() => {
     if (user) {
-      const fetchFavoriteRoutes = async () => {
-        try {
-          const response = await axios.get(`http://localhost:8081/api/favorite-routes/${user.id}`);
-          setFavoriteRoutes(response.data);
-        } catch (err) {
-          console.error("Failed to fetch favorite routes:", err);
-        }
-      };
-      fetchFavoriteRoutes();
+      const savedRoutes = JSON.parse(localStorage.getItem('savedRoutes')) || [];
+      setFavoriteRoutes(savedRoutes);
     }
   }, [user]);
 
