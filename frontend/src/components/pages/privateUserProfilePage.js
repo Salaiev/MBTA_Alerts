@@ -60,7 +60,7 @@ const PrivateUserProfile = () => {
 
     const updatedRoutes = [...savedRoutes, newRoute];
     setSavedRoutes(updatedRoutes);
-    localStorage.setItem("savedRoutes", JSON.stringify(updatedRoutes));
+    localStorage.setItem('savedRoutes', JSON.stringify(updatedRoutes));
 
     setNewRoute({ fromStation: "", toStation: "", routeName: "" });
     setFromLine("");
