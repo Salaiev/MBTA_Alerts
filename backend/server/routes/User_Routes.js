@@ -1,19 +1,17 @@
-console.log(" userRoutes.js is loaded");
-
 const express = require('express');
 const router = express.Router();
 const User = require('../models/userModel');
 
-//  Signup
+// Create User (Signup)
 router.post('/signup', async (req, res) => {
   try {
-    const { username, email, password, city, preferredRoute } = req.body;
+    const { name, lastname, username, email, password } = req.body;
 
-    if (!username || !email || !password || !city) {
+    if (!name || !lastname || !username || !email || !password) {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const user = new User({ username, email, password, city, preferredRoute });
+    const user = new User({ name, lastname, username, email, password });
     await user.save();
 
     res.status(201).json({ message: 'User created', user });
@@ -23,12 +21,12 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-//  Login
+// Login
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const user = await User.findOne({ username, password }); // WARNING: Hash in production
+    const user = await User.findOne({ username, password });
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
@@ -40,7 +38,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-//  Get All Users
+// Get All Users
 router.get('/getAll', async (req, res) => {
   try {
     const users = await User.find();
@@ -50,29 +48,7 @@ router.get('/getAll', async (req, res) => {
   }
 });
 
-//  Update User
-router.put('/editUser/:id', async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const { username, email, password, city, preferredRoute } = req.body;
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { username, email, password, city, preferredRoute },
-      { new: true }
-    );
-
-    if (!updatedUser) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    res.json({ message: 'User updated', user: updatedUser });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to update user' });
-  }
-});
-
-//  Get User by ID
+// Get User by ID
 router.get('/getUserById/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -87,17 +63,7 @@ router.get('/getUserById/:id', async (req, res) => {
   }
 });
 
-//  Delete All Users
-router.delete('/deleteAll', async (req, res) => {
-  try {
-    await User.deleteMany({});
-    res.json({ message: 'All users deleted' });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete users' });
-  }
-});
-
-//  Delete by ID
+// Delete User by ID
 router.delete('/deleteUser/:id', async (req, res) => {
   try {
     const deletedUser = await User.findByIdAndDelete(req.params.id);
@@ -109,6 +75,16 @@ router.delete('/deleteUser/:id', async (req, res) => {
     res.json({ message: 'User deleted' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to delete user' });
+  }
+});
+
+// Delete All Users
+router.delete('/deleteAll', async (req, res) => {
+  try {
+    await User.deleteMany({});
+    res.json({ message: 'All users deleted' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete users' });
   }
 });
 

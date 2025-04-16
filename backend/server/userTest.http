@@ -1,19 +1,19 @@
-###  Signup (Create User)
-POST http://localhost:8081/user/signup
+### Signup (Create User)
+POST http://localhost:8081/api/users/signup
 Content-Type: application/json
 
 {
+  "name": "Test",
+  "lastname": "User",
   "username": "testuser",
   "email": "test@example.com",
-  "password": "password123",
-  "city": "Test City",
-  "preferredRoute": "Route A"
+  "password": "password123"
 }
 
 ###
 
-###  Login (Authenticate User)
-POST http://localhost:8081/user/login
+### Login (Authenticate User)
+POST http://localhost:8081/api/users/login
 Content-Type: application/json
 
 {
@@ -23,34 +23,54 @@ Content-Type: application/json
 
 ###
 
-###  Get All Users
-GET http://localhost:8081/user/getAll
+### Get All Users
+GET http://localhost:8081/api/users/getAll
 
 ###
 
-###  Get User by ID (replace :id)
-GET http://localhost:8081/user/getUserById/REPLACE_WITH_USER_ID
-
-###
-
-###  Update User by ID
-PUT http://localhost:8081/user/editUser/REPLACE_WITH_USER_ID
-Content-Type: application/json
-
-{
-  "username": "updatedUser",
-  "email": "updated@example.com",
-  "password": "newpassword",
-  "city": "Updated City",
-  "preferredRoute": "Updated Route"
-}
+### Get User by ID (replace :userId)
+GET http://localhost:8081/api/users/getUserById/67fce98d501398e431a4092b
 
 ###
 
 ### Delete User by ID
-DELETE http://localhost:8081/user/deleteUser/REPLACE_WITH_USER_ID
+DELETE http://localhost:8081/api/users/deleteUser/67fce98d501398e431a4092b
 
 ###
 
-###  Delete All Users
-DELETE http://localhost:8081/user/deleteAll
+### Delete All Users
+DELETE http://localhost:8081/api/users/deleteAll
+
+###
+
+###  Add Favorite Route to User
+POST http://localhost:8081/api/favorite-routes/67fce98d501398e431a4092b
+Content-Type: application/json
+
+{
+  "fromStation": "place-sstat",
+  "toStation": "place-north",
+  "routeName": "Red Line"
+}
+
+###
+
+###  Get All Favorite Routes of a User
+GET http://localhost:8081/api/favorite-routes/67fce98d501398e431a4092b
+
+###
+
+###  Update Favorite Route
+PUT http://localhost:8081/api/favorite-routes/67fce98d501398e431a4092b/67fcedbdbac936d3b8cd0b09
+Content-Type: application/json
+
+{
+  "fromStation": "Wonderland",
+  "toStation": "North Station",
+  "routeName": "Updated blue Line"
+}
+
+###
+
+###  Delete Favorite Route
+DELETE http://localhost:8081/api/favorite-routes/67fcedbdbac936d3b8cd0b09

@@ -1,9 +1,24 @@
 const mongoose = require('mongoose');
 
+const favoriteRouteSchema = new mongoose.Schema({
+  fromStation: { type: String, required: true },
+  toStation: { type: String, required: true },
+  routeName: { type: String }
+}, { _id: true }); // разрешаем MongoDB создавать _id для каждого маршрута
+
 const userSchema = new mongoose.Schema({
-  username: { 
+  name: { 
     type: String, 
     required: true 
+  },
+  lastname: { 
+    type: String, 
+    required: true 
+  },
+  username: {
+    type: String,
+    required: true,
+    unique: true
   },
   email: { 
     type: String, 
@@ -15,20 +30,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 8
   },
-  city: { 
-    type: String, 
-    required: true 
-  },
-  preferredRoute: { 
-    type: String 
-  },
-  date: {
-    type: Date,
-    default: Date.now
-  }
+  favoriteRoutes: [favoriteRouteSchema]
 }, { 
   timestamps: true,
   collection: "users"
 });
 
-module.exports = mongoose.model('userModel', userSchema);
+module.exports = mongoose.model('User', userSchema);
