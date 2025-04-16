@@ -1,7 +1,26 @@
-// src/pages/SchedulePage.js
-import React from 'react';
+import React, { useState } from 'react';
+import LineSelector from '../LineSelector';
+import StationSelector from '../StationSelector';
+import DirectionSelector from '../DirectionSelector';
+import ScheduleDisplay from '../ScheduleDisplay';
+import BusRouteInput from '../BusRouteInput';
+import BusStopSelector from '../BusStopSelector';
+import BusScheduleDisplay from '../BusScheduleDisplay';
 
-const SchedulePage = () => {
+
+
+const MainSchedule = () => {
+  const [mode, setMode] = useState('train'); // 'train' or 'bus'
+
+  // Train state
+  const [direction, setDirection] = useState('0');
+  const [selectedLineId, setSelectedLineId] = useState('');
+  const [selectedStationId, setSelectedStationId] = useState('');
+  const [busRouteId, setBusRouteId] = useState('');
+  const [selectedBusStopId, setSelectedBusStopId] = useState('');
+
+
+
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-start pt-10 px-4">
       <div className="w-full max-w-xl bg-white rounded-xl shadow p-6 space-y-6">
@@ -9,13 +28,75 @@ const SchedulePage = () => {
           MBTA Schedule Explorer
         </h1>
 
-        {/* We'll insert components here in future steps */}
-        <p className="text-center text-gray-500">
-          Choose a subway line to begin.
-        </p>
+        {/* 🚦 Mode Toggle */}
+        <div className="flex justify-center gap-4">
+          <button
+            className={`px-4 py-2 rounded-lg ${
+              mode === 'train' ? 'bg-blue-600 text-white' : 'bg-gray-200'
+            }`}
+            onClick={() => setMode('train')}
+          >
+            Train
+          </button>
+          <button
+            className={`px-4 py-2 rounded-lg ${
+              mode === 'bus' ? 'bg-blue-600 text-white' : 'bg-gray-200'
+            }`}
+            onClick={() => setMode('bus')}
+          >
+            Bus
+          </button>
+        </div>
+
+        {/* 🚇 Train Mode */}
+        {mode === 'train' && (
+          <>
+            <LineSelector setSelectedLineId={setSelectedLineId} />
+
+            {selectedLineId && (
+              <StationSelector
+                selectedLineId={selectedLineId}
+                setSelectedStationId={setSelectedStationId}
+              />
+            )}
+
+            {selectedStationId && (
+              <DirectionSelector
+                direction={direction}
+                setDirection={setDirection}
+              />
+            )}
+
+            {selectedStationId && (
+              <ScheduleDisplay
+                stationId={selectedStationId}
+                direction={direction}
+              />
+            )}
+          </>
+        )}
+
+        {/* 🚌 Bus Mode */}
+        {mode === 'bus' && (
+  <>
+    <BusRouteInput setRouteId={setBusRouteId} />
+
+    {busRouteId && (
+      <BusStopSelector
+        routeId={busRouteId}
+        setSelectedStopId={setSelectedBusStopId}
+      />
+    )}
+    {selectedBusStopId && (
+  <BusScheduleDisplay stopId={selectedBusStopId} />
+)}
+
+  </>
+)}
+
       </div>
     </div>
   );
 };
 
-export default SchedulePage;
+export default MainSchedule;

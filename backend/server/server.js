@@ -7,6 +7,9 @@ const subwayRoutes = require('./routes/Subway_Routes');
 const subwayStations = require('./routes/Subway_Stations');
 const subwayArrivals = require('./routes/Subway_Arrivals');
 const userRoutes = require('./routes/User_Routes' );
+const busStops = require('./routes/BusStops');
+
+
 
 const app = express();
 
@@ -15,14 +18,15 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-mongoose.connect(process.env.DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-  .then(() => console.log(" Connected to MongoDB"))
-  .catch(err => console.error(" MongoDB error:", err));
+// mongoose.connect(process.env.DB_URL, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// })
+//   .then(() => console.log(" Connected to MongoDB"))
+//   .catch(err => console.error(" MongoDB error:", err));
 
 // Routes
+app.use('/api/bus-stops', busStops);
 app.use('/api/lines', subwayRoutes);
 app.use('/api/stations', subwayStations);
 app.use('/api/arrivals', subwayArrivals);

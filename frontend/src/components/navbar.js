@@ -24,7 +24,7 @@ export default function Navbar() {
     <Container>
       <Nav className="me-auto">
         <Nav.Link href="/">Start</Nav.Link>
-        <Nav.Link href="/home">Home</Nav.Link>
+        <Nav.Link href="/schedule">Home</Nav.Link>
         <Nav.Link href="/privateUserProfile">Profile</Nav.Link>
         <Nav.Link href="/alerts">Alerts</Nav.Link>
       </Nav>
