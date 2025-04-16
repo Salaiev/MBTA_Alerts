@@ -26,7 +26,7 @@ function Alerts() {
       try {
         setLoading(true);
         const result = await axios.get(
-          'https://api-v3.mbta.com/alerts?sort=-updated_at&fields%5Balert%5D=header%2Ceffect-name%2Cseverity%2Cupdated_at&include=stops&filter%5Bactivity%5D=BOARD%2CEXIT%2CRIDE'
+          'https://api-v3.mbta.com/alerts?sort=-updated_at&fields%5Balert%5D=header%2Ceffect-name%2Cseverity%2Cupdated_at%2Clifecycle&include=stops&filter%5Bactivity%5D=BOARD%2CEXIT%2CRIDE'
         );
         setAlerts(result.data.data);
         setError(null);
@@ -157,6 +157,9 @@ function Alerts() {
                 <Card.Text>{alert.attributes.header}</Card.Text>
                 <div className="alert-severity">
                   Severity: {alert.attributes.severity}
+                </div>
+                <div className="alert-lifecycle">
+                  Status: {alert.attributes.lifecycle || 'Unknown'}
                 </div>
                 <div className="alert-updated">
                   {alert.attributes.updated_at
