@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react'; //rename
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
+import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
+import getUserInfo from '../../utilities/decodeJwt';
 import '../../css/alerts.css';
 
 function Alerts() {
@@ -13,6 +15,8 @@ function Alerts() {
   const [busSearch, setBusSearch] = useState('');
   const [loading, setLoading,] = useState(true);
   const [error, setError] = useState(null);
+  const [favoriteRoutes, setFavoriteRoutes] = useState([]);
+  const [user, setUser] = useState(null);
 
   const trainLines = [
     { id: 'red', name: 'Red Line', color: '#FA2D27' },
@@ -20,6 +24,25 @@ function Alerts() {
     { id: 'blue', name: 'Blue Line', color: '#003DA5' },
     { id: 'orange', name: 'Orange Line', color: '#ED8B00' }
   ];
+
+  useEffect(() => {
+    const userInfo = getUserInfo();
+    setUser(userInfo);
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      const fetchFavoriteRoutes = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8081/api/favorite-routes/${user.id}`);
+          setFavoriteRoutes(response.data);
+        } catch (err) {
+          console.error("Failed to fetch favorite routes:", err);
+        }
+      };
+      fetchFavoriteRoutes();
+    }
+  }, [user]);
 
   useEffect(() => {
     async function fetchAlerts() {
@@ -137,6 +160,32 @@ function Alerts() {
             }}
             className="bus-search"
           />
+        </div>
+
+        <div className="favorites-filter">
+          <h3>Favorite Routes</h3>
+          <Dropdown>
+            <Dropdown.Toggle variant="secondary" id="favorites-dropdown">
+              Select Favorite Route
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              {favoriteRoutes.length === 0 ? (
+                <Dropdown.Item disabled>No favorite routes added yet</Dropdown.Item>
+              ) : (
+                favoriteRoutes.map((route) => (
+                  <Dropdown.Item 
+                    key={route._id} 
+                    onClick={() => {
+                      setSelectedType('bus');
+                      setBusSearch(route.routeName);
+                    }}
+                  >
+                    {route.routeName} ({route.fromStation} → {route.toStation})
+                  </Dropdown.Item>
+                ))
+              )}
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
       </div>
 
