@@ -14,7 +14,7 @@ router.get('/:routeId', async (req, res) => {
     const result = await axios.get('https://api-v3.mbta.com/stops', {
       params: {
         'filter[route]': routeId,
-        'page[limit]': 100, // optional: limit how many stops you return
+        'page[limit]': 200, 
       }
     });
 
