@@ -19,12 +19,12 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB Connection
-// mongoose.connect(process.env.DB_URL, {
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-// })
-//   .then(() => console.log(" Connected to MongoDB"))
-//   .catch(err => console.error(" MongoDB error:", err));
+mongoose.connect(process.env.DB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log(" Connected to MongoDB"))
+  .catch(err => console.error(" MongoDB error:", err));
 
 // Routes
 app.use('/api/bus-stops', busStops);
