@@ -74,3 +74,16 @@ Content-Type: application/json
 
 ###  Delete Favorite Route
 DELETE http://localhost:8081/api/favorite-routes/67fcedbdbac936d3b8cd0b09
+
+### Login (Authenticate User)
+POST http://localhost:8081/api/feedback/createPost/feedback
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "comment": "blank",
+  "station": "wonderland"
+}
+
+
+
