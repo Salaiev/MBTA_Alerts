@@ -6,6 +6,8 @@ import ScheduleDisplay from '../ScheduleDisplay';
 import BusRouteInput from '../BusRouteInput';
 import BusStopSelector from '../BusStopSelector';
 import BusScheduleDisplay from '../BusScheduleDisplay';
+import LiveVehicleMap from '../map/LiveVehicleMap';
+
 
 
 
@@ -86,8 +88,11 @@ const MainSchedule = () => {
               <ScheduleDisplay
                 stationId={selectedStationId}
                 direction={direction}
-              />
+              />,
+              <LiveVehicleMap routeId={selectedLineId} />
+
             )}
+         
           </>
         )}
 
