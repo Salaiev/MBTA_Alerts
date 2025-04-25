@@ -73,5 +73,4 @@ Content-Type: application/json
 
 ###
 
-### Delete Favorite Route by Route ID
-DELETE http://localhost:8081/api/favorite-routes/REPLACE_WITH_ROUTE_ID
+

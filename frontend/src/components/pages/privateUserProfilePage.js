@@ -51,9 +51,7 @@ const PrivateUserProfile = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
+
   };
 
   const handleAddRoute = async () => {

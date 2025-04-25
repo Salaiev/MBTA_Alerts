@@ -10,6 +10,8 @@ const subwayArrivals = require('./routes/Subway_Arrivals');
 const userRoutes = require('./routes/User_Routes' );
 const busStops = require('./routes/BusStops');
 const favoriteRoutes = require('./routes/favoriteRoutes');
+const createPost = require('./routes/feedback/createPost');
+
 
 
 
@@ -34,6 +36,7 @@ app.use('/api/stations', subwayStations);
 app.use('/api/arrivals', subwayArrivals);
 app.use('/api/users', userRoutes); 
 app.use('/api/favorite-routes', favoriteRoutes);
+app.use('/api/feedback/createPost', createPost);
 
 // Server Port
 const PORT = process.env.PORT || 8081;
