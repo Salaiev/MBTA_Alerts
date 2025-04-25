@@ -7,7 +7,7 @@ import getUserInfo from "../../utilities/decodeJwt";
 
 const PRIMARY_COLOR = "#cc5c99";
 const SECONDARY_COLOR = '#0c0c1f'
-const url = `${process.env.REACT_APP_BACKEND_SERVER_URI}/user/login`;
+const url = `${process.env.REACT_APP_BACKEND_SERVER_URI}/api/users/login`;
 
 const Login = () => {
   const [user, setUser] = useState(null)
@@ -51,21 +51,36 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data: res } = await axios.post(url, data);
-      const { accessToken } = res;
-      //store token in localStorage
-      localStorage.setItem("accessToken", accessToken);
-      navigate("/home");
+      const response = await axios.post(url, {
+        username: data.username,
+        password: data.password,
+      });
+      
+      console.log("Response from backend:", response.data);
+      
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem("token", token);
+        console.log("Token saved to localStorage:", token);
+        navigate("/home");
+      } else {
+        setError("No token received");
+      }
+      
+  
     } catch (error) {
+      console.error("Login error:", error);
       if (
         error.response &&
         error.response.status >= 400 &&
         error.response.status <= 500
       ) {
-        setError(error.response.data.message);
+        setError(error.response.data.error || "Login failed");
       }
     }
   };
+  
+  
 
   if(user) {
     navigate('/home')
