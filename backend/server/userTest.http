@@ -3,22 +3,22 @@ POST http://localhost:8081/api/users/signup
 Content-Type: application/json
 
 {
-  "name": "Test",
-  "lastname": "User",
-  "username": "testuser",
-  "email": "test@example.com",
-  "password": "password123"
+  "name":  "Kutmanbek2",
+  "lastname":  "Salaiev",
+  "username": "ksaiev",
+  "email": "ksalaiev@gil.com",
+  "password": "AliNurali8587$$"
 }
 
-###
+
 
 ### Login (Authenticate User)
 POST http://localhost:8081/api/users/login
 Content-Type: application/json
 
 {
-  "username": "testuser",
-  "password": "password123"
+  "username":  "ksalaiev",
+  "password":"AliNurali8587$$"
 }
 
 ###
@@ -28,13 +28,13 @@ GET http://localhost:8081/api/users/getAll
 
 ###
 
-### Get User by ID (replace :userId)
-GET http://localhost:8081/api/users/getUserById/67fce98d501398e431a4092b
+### Get User by ID (replace :id)
+GET http://localhost:8081/api/users/getUserById/REPLACE_WITH_USER_ID
 
 ###
 
 ### Delete User by ID
-DELETE http://localhost:8081/api/users/deleteUser/67fce98d501398e431a4092b
+DELETE http://localhost:8081/api/users/deleteUser/REPLACE_WITH_USER_ID
 
 ###
 
@@ -43,11 +43,12 @@ DELETE http://localhost:8081/api/users/deleteAll
 
 ###
 
-###  Add Favorite Route to User
-POST http://localhost:8081/api/favorite-routes/67fce98d501398e431a4092b
+### Create Favorite Route
+POST http://localhost:8081/api/favorite-routes
 Content-Type: application/json
 
 {
+  "userId": "REPLACE_WITH_USER_ID",
   "fromStation": "place-sstat",
   "toStation": "place-north",
   "routeName": "Red Line"
@@ -55,22 +56,22 @@ Content-Type: application/json
 
 ###
 
-###  Get All Favorite Routes of a User
-GET http://localhost:8081/api/favorite-routes/67fce98d501398e431a4092b
+### Get All Favorite Routes for a User
+GET http://localhost:8081/api/favorite-routes/REPLACE_WITH_USER_ID
 
 ###
 
-###  Update Favorite Route
-PUT http://localhost:8081/api/favorite-routes/67fce98d501398e431a4092b/67fcedbdbac936d3b8cd0b09
+### Update Favorite Route by Route ID
+PUT http://localhost:8081/api/favorite-routes/REPLACE_WITH_ROUTE_ID
 Content-Type: application/json
 
 {
-  "fromStation": "Wonderland",
-  "toStation": "North Station",
-  "routeName": "Updated blue Line"
+  "fromStation": "place-savin",
+  "toStation": "place-ashmt",
+  "routeName": "Updated Red Line"
 }
 
 ###
 
-###  Delete Favorite Route
-DELETE http://localhost:8081/api/favorite-routes/67fcedbdbac936d3b8cd0b09
+### Delete Favorite Route by Route ID
+DELETE http://localhost:8081/api/favorite-routes/REPLACE_WITH_ROUTE_ID

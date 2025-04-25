@@ -51,21 +51,36 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data: res } = await axios.post(url, data);
-      const { accessToken } = res;
-      //store token in localStorage
-      localStorage.setItem("accessToken", accessToken);
-      navigate("/home");
+      const response = await axios.post(url, {
+        username: data.username,
+        password: data.password,
+      });
+      
+      console.log("Response from backend:", response.data);
+      
+      const token = response.data.token;
+      if (token) {
+        localStorage.setItem("token", token);
+        console.log("Token saved to localStorage:", token);
+        navigate("/home");
+      } else {
+        setError("No token received");
+      }
+      
+  
     } catch (error) {
+      console.error("Login error:", error);
       if (
         error.response &&
         error.response.status >= 400 &&
         error.response.status <= 500
       ) {
-        setError(error.response.data.message);
+        setError(error.response.data.error || "Login failed");
       }
     }
   };
+  
+  
 
   if(user) {
     navigate('/home')

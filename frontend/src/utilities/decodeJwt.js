@@ -1,9 +1,9 @@
 import jwt_decode from 'jwt-decode'
 
 const getUserInfo = () => {
-    const accessToken = localStorage.getItem("accessToken")
-    if(!accessToken) return undefined
-    return jwt_decode(accessToken)
+    const token = localStorage.getItem("token")
+    if(!token) return undefined
+    return jwt_decode(token)
 }
 
-export default getUserInfo
+export default getUserInfo;
