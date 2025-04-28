@@ -51,27 +51,18 @@ const PrivateUserProfile = () => {
     }
   };
 
-
-  };
-
   const handleAddRoute = async () => {
     if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName) return;
-    const userId = "678a91bd9bafcee9c71265e4"; 
-    console.log("Sending data:", newRoute);
-  console.log("User ID:", userId);
 
     try {
       const response = await axios.post(
         `http://localhost:8081/api/favorite-routes/${user._id}`,
         newRoute
       );
-      
-      // Update the user state with new favorite routes
       setUser(prev => ({
         ...prev,
         favoriteRoutes: [...prev.favoriteRoutes, response.data]
       }));
-      
       setNewRoute({ fromStation: "", toStation: "", routeName: "" });
       setFromLine("");
       setToLine("");
@@ -87,7 +78,7 @@ const PrivateUserProfile = () => {
       await axios.delete(`http://localhost:8081/api/favorite-routes/${user._id}/${routeId}`);
       setUser(prev => ({
         ...prev,
-        favoriteRoutes: prev.favoriteRoutes.filter(route => route._id !== routeId),
+        favoriteRoutes: prev.favoriteRoutes.filter(route => route._id !== routeId)
       }));
     } catch (err) {
       console.error("Failed to delete route:", err);
@@ -97,6 +88,11 @@ const PrivateUserProfile = () => {
   const handleSettingsSave = () => {
     setUser(prev => ({ ...prev, name: settings.name }));
     setShowSettingsModal(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/");
   };
 
   const openAddModal = () => {
@@ -183,7 +179,7 @@ const PrivateUserProfile = () => {
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
           <Modal.Header closeButton><Modal.Title>Edit/Delete Favorite Routes</Modal.Title></Modal.Header>
           <Modal.Body>
-            {user.favoriteRoutes && user.favoriteRoutes.map((route) => (
+            {user.favoriteRoutes && user.favoriteRoutes.map(route => (
               <div key={route._id} className="mb-3 p-2 border rounded">
                 <div><strong>{route.routeName}</strong></div>
                 <div>{route.fromStation} → {route.toStation}</div>
@@ -220,6 +216,7 @@ const PrivateUserProfile = () => {
             <Button variant="primary" onClick={handleLogout}>Yes</Button>
           </Modal.Footer>
         </Modal>
+
       </div>
     </div>
   );
