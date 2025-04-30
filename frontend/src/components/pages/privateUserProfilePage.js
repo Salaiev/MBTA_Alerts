@@ -25,10 +25,27 @@ const PrivateUserProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userInfo = getUserInfo();
-    setUser(userInfo);
-    setSettings({ name: userInfo.name, password: "" });
+    const raw = getUserInfo();
+    if (!raw) return;
+    // <-- here’s the fix: pull the real userId field
+    const mapped = { _id: raw.userId, ...raw };
+    setUser(mapped);
+    setSettings({ name: mapped.name, password: "" });
+    fetchFavoriteRoutes(mapped._id);
   }, []);
+
+
+  const fetchFavoriteRoutes = async (userId) => {
+    try {
+      const response = await axios.get(`http://localhost:8081/api/favorite-routes/${userId}`);
+      setUser(prev => ({
+        ...prev,
+        favoriteRoutes: response.data
+      }));
+    } catch (err) {
+      console.error("Failed to fetch favorite routes:", err);
+    }
+  };
 
   const fetchLines = async () => {
     try {
@@ -51,35 +68,38 @@ const PrivateUserProfile = () => {
     }
   };
 
-  const handleAddRoute = async () => {
-    if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName) return;
+ const handleAddRoute = async () => {
+  if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName || !user || !user._id) {
+    alert("Please fill all fields before saving.");
+    return;
+  }
 
-    try {
-      const response = await axios.post(
-        `http://localhost:8081/api/favorite-routes/${user._id}`,
-        newRoute
-      );
-      setUser(prev => ({
-        ...prev,
-        favoriteRoutes: [...prev.favoriteRoutes, response.data]
-      }));
-      setNewRoute({ fromStation: "", toStation: "", routeName: "" });
-      setFromLine("");
-      setToLine("");
-      setShowAddModal(false);
-    } catch (err) {
-      console.error("Failed to add route:", err);
-      alert("Failed to save route. Please check the console for details.");
-    }
-  };
+  console.log("Submitting new route:", newRoute);
+  console.log("Submitting for user ID:", user._id);
+
+  try {
+    const response = await axios.post(
+      `http://localhost:8081/api/favorite-routes/${user._id}`,
+      newRoute
+    );
+    console.log("Route saved successfully:", response.data);
+    await fetchFavoriteRoutes(user._id);
+    setNewRoute({ fromStation: "", toStation: "", routeName: "" });
+    setFromLine("");
+    setToLine("");
+    setShowAddModal(false);
+  } catch (err) {
+    console.error("Failed to add route:", err.response?.data || err.message);
+    alert("Failed to save route. Check console for details.");
+  }
+};
+
+  
 
   const handleDeleteRoute = async (routeId) => {
     try {
       await axios.delete(`http://localhost:8081/api/favorite-routes/${user._id}/${routeId}`);
-      setUser(prev => ({
-        ...prev,
-        favoriteRoutes: prev.favoriteRoutes.filter(route => route._id !== routeId)
-      }));
+      await fetchFavoriteRoutes(user._id);
     } catch (err) {
       console.error("Failed to delete route:", err);
     }
@@ -216,7 +236,6 @@ const PrivateUserProfile = () => {
             <Button variant="primary" onClick={handleLogout}>Yes</Button>
           </Modal.Footer>
         </Modal>
-
       </div>
     </div>
   );
