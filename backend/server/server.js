@@ -18,20 +18,31 @@ const getPost = require('./routes/feedback/getPost');
 
 
 
-
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+const corsOptions = {
+  origin: 'http://localhost:3000', // Replace with your frontend's URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type'],
+};
 
+const cors = require('cors');
+app.use(cors({
+  origin: 'http://localhost:3000', // Frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type'],
+}));
+
+app.use(express.json()); // Middleware to parse JSON bodies
 // MongoDB Connection
 mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-  .then(() => console.log(" Connected to MongoDB"))
-  .catch(err => console.error(" MongoDB error:", err));
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("MongoDB error:", err));
+
 
 // Routes
 app.use('/api/bus-arrivals', busArrivals);
@@ -41,10 +52,11 @@ app.use('/api/stations', subwayStations);
 app.use('/api/arrivals', subwayArrivals);
 app.use('/api/users', userRoutes); 
 app.use('/api/favorite-routes', favoriteRoutes);
-app.use('/api/feedback/createPost', createPost);
-app.use('/api/feedback/deletePost', deletePost);
-app.use('/api/feedback/updatePost', updatePost);
-app.use('/api/feedback/getPost', getPost);
+
+app.use('/api/feedback/create', createPost);    // POST: /api/feedback/create
+app.use('/api/feedback', getPost);               // GET: /api/feedback
+app.use('/api/feedback/delete', deletePost);    // DELETE: /api/feedback/:id
+app.use('/api/feedback/update', updatePost);    // PUT: /api/feedback/:id
 
 
 // Server Port

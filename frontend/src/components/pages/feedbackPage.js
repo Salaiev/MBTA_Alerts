@@ -21,21 +21,19 @@ const FeedbackPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Get user info on component mount
   useEffect(() => {
     const userInfo = getUserInfo();
     setUser(userInfo);
   }, []);
 
-  // Fetch lines based on transport type
   useEffect(() => {
     const fetchLines = async () => {
       setLoading(true);
       setError('');
       try {
         let endpoint = transportType === 'train' 
-          ? 'https://api-v3.mbta.com/routes?filter[type]=0,1'  // Subway routes
-          : 'https://api-v3.mbta.com/routes?filter[type]=3';   // Bus routes
+          ? 'https://api-v3.mbta.com/routes?filter[type]=0,1'
+          : 'https://api-v3.mbta.com/routes?filter[type]=3';
         
         const response = await axios.get(endpoint);
         const lineList = response.data.data.map(line => ({
@@ -56,7 +54,6 @@ const FeedbackPage = () => {
     fetchLines();
   }, [transportType]);
 
-  // Fetch stations when a line is selected
   useEffect(() => {
     const fetchStations = async () => {
       if (!selectedLine) {
@@ -84,7 +81,6 @@ const FeedbackPage = () => {
     fetchStations();
   }, [selectedLine]);
 
-  // Fetch feedback posts
   useEffect(() => {
     const fetchFeedbackPosts = async () => {
       if (!selectedStation) return;
@@ -92,7 +88,7 @@ const FeedbackPage = () => {
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get('http://localhost:8081/api/feedback/feedback');
+        const response = await axios.get('http://localhost:8081/api/feedback/getPost');
         const filteredPosts = response.data.filter(post => post.Station === selectedStation);
         setFeedbackPosts(filteredPosts);
       } catch (err) {
@@ -124,12 +120,14 @@ const FeedbackPage = () => {
         station: selectedStation
       };
 
-      await axios.post('http://localhost:8081/api/feedback/feedback', feedbackData);
-      
-      const response = await axios.get('http://localhost:8081/api/feedback/feedback');
-      const filteredPosts = response.data.filter(post => post.Station === selectedStation);
-      setFeedbackPosts(filteredPosts);
-      
+      await axios.post('http://localhost:8081/api/feedback/createPost', feedbackData);
+
+      // ✅ Updated only this part:
+      setFeedbackPosts(prev => [
+        ...prev,
+        { ...feedbackData, postDate: new Date().toISOString() }
+      ]);
+
       setNewComment('');
       setSuccess('Your feedback has been submitted successfully!');
     } catch (err) {
@@ -215,7 +213,7 @@ const FeedbackPage = () => {
                 </div>
               ) : (
                 feedbackPosts.map(post => (
-                  <Card key={post._id} className="feedback-card">
+                  <Card key={post._id || post.comment} className="feedback-card">
                     <Card.Body>
                       <Card.Title>{post.username}</Card.Title>
                       <Card.Text>{post.comment}</Card.Text>

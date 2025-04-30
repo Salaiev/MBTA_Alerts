@@ -3,7 +3,7 @@ const router = express.Router();
 const feedbackPostModel = require('../../models/FeedbackPostModel');
 const mongoose = require('mongoose');
 
-router.get('/feedback/:id', async (req, res) => {
+router.get('/getPost/:id', async (req, res) => {
     try{
         const { id } = req.params;
     
@@ -25,7 +25,7 @@ router.get('/feedback/:id', async (req, res) => {
     }
 });
 
-router.get('/feedback', async (req, res) =>{
+router.get('/getPost', async (req, res) => {
     try{
         const allFeedbackPosts = await feedbackPostModel.find()
         return res.status(200).json(allFeedbackPosts)
