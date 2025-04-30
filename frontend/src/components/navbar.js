@@ -27,6 +27,7 @@ export default function Navbar() {
         <Nav.Link href="/schedule">Home</Nav.Link>
         <Nav.Link href="/privateUserProfile">Profile</Nav.Link>
         <Nav.Link href="/alerts">Alerts</Nav.Link>
+        <Nav.Link href="/feedback">Feedback</Nav.Link>
       </Nav>
     </Container>
   </ReactNavbar>

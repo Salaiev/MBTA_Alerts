@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/userModel');
+const jwt = require("jsonwebtoken");
 
 // Create User (Signup)
 router.post('/signup', async (req, res) => {
@@ -21,22 +22,33 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-// Login
 router.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-
     const user = await User.findOne({ username, password });
 
     if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    res.json({ message: 'Login successful', user });
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        username: user.username,
+        name: user.name,             //
+        lastname: user.lastname,     // 
+        email: user.email            //
+      },
+      process.env.ACCESS_TOKEN_SECRET || "secret123",
+      { expiresIn: '1h' }
+    );
+
+    res.json({ message: 'Login successful', token });
   } catch (err) {
     res.status(500).json({ error: 'Server error during login' });
   }
 });
+
 
 // Get All Users
 router.get('/getAll', async (req, res) => {

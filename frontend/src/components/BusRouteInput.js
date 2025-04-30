@@ -12,7 +12,9 @@ const BusRouteInput = ({ setRouteId }) => {
 
   return (
     <div className="space-y-2">
+
       <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
+
       <label className="block text-sm font-medium text-gray-700">
         Enter Bus Route Number
       </label>

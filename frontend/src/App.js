@@ -12,6 +12,7 @@ import Login from "./components/pages/loginPage";
 import Signup from "./components/pages/registerPage";
 import PrivateUserProfile from "./components/pages/privateUserProfilePage";
 import Alerts from "./components/pages/alertsPage";
+import Feedback from "./components/pages/feedbackPage";
 import { createContext, useState, useEffect } from "react";
 import getUserInfo from "./utilities/decodeJwt";
 import MainSchedule from "./components/pages/MainSchedule";
@@ -36,6 +37,7 @@ const App = () => {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/alerts" element={<Alerts/>} />
+          <Route exact path="/feedback" element={<Feedback/>} />
           <Route exact path="/schedule" element={<MainSchedule />} />
 
           <Route path="/privateUserProfile" element={<PrivateUserProfile />} />
