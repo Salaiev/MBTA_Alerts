@@ -25,14 +25,33 @@ const PrivateUserProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const userInfo = getUserInfo();
-    setUser(userInfo);
-    setSettings({ name: userInfo.name, password: "" });
+    const raw = getUserInfo();
+    if (!raw) return;
+    const mapped = { _id: raw.userId, ...raw };
+    setUser(mapped);
+    setSettings({ name: mapped.name, password: "" });
+    fetchFavoriteRoutes(mapped._id);
   }, []);
+
+  const fetchFavoriteRoutes = async (userId) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:8081/api/favorite-routes/${userId}`
+      );
+      setUser(prev => ({
+        ...prev,
+        favoriteRoutes: response.data
+      }));
+    } catch (err) {
+      console.error("Failed to fetch favorite routes:", err);
+    }
+  };
 
   const fetchLines = async () => {
     try {
-      const response = await axios.get("https://api-v3.mbta.com/routes?filter[type]=0,1");
+      const response = await axios.get(
+        "https://api-v3.mbta.com/routes?filter[type]=0,1"
+      );
       const lineList = response.data.data.map(line => ({ id: line.id, name: line.attributes.long_name }));
       setLines(lineList);
     } catch (err) {
@@ -42,50 +61,49 @@ const PrivateUserProfile = () => {
 
   const fetchStationsForLine = async (lineId, target) => {
     try {
-      const response = await axios.get(`https://api-v3.mbta.com/stops?filter[route]=${lineId}`);
+      const response = await axios.get(
+        `https://api-v3.mbta.com/stops?filter[route]=${lineId}`
+      );
       const stationList = response.data.data.map(stop => ({ id: stop.id, name: stop.attributes.name }));
       if (target === "from") setFromStations(stationList);
       else setToStations(stationList);
     } catch (err) {
       console.error("Failed to fetch stations for line:", err);
     }
-  }; // <-- Only this one!
+  };
 
   const handleAddRoute = async () => {
-    if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName) return;
-    const userId = "678a91bd9bafcee9c71265e4"; 
-    console.log("Sending data:", newRoute);
-    console.log("User ID:", userId);
+    if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName || !user || !user._id) {
+      alert("Please fill all fields before saving.");
+      return;
+    }
+
+    console.log("Submitting new route:", newRoute);
+    console.log("Submitting for user ID:", user._id);
 
     try {
       const response = await axios.post(
         `http://localhost:8081/api/favorite-routes/${user._id}`,
         newRoute
       );
-      
-      // Update the user state with new favorite routes
-      setUser(prev => ({
-        ...prev,
-        favoriteRoutes: [...prev.favoriteRoutes, response.data]
-      }));
-      
+      console.log("Route saved successfully:", response.data);
+      await fetchFavoriteRoutes(user._id);
       setNewRoute({ fromStation: "", toStation: "", routeName: "" });
       setFromLine("");
       setToLine("");
       setShowAddModal(false);
     } catch (err) {
-      console.error("Failed to add route:", err);
-      alert("Failed to save route. Please check the console for details.");
+      console.error("Failed to add route:", err.response?.data || err.message);
+      alert("Failed to save route. Check console for details.");
     }
   };
 
   const handleDeleteRoute = async (routeId) => {
     try {
-      await axios.delete(`http://localhost:8081/api/favorite-routes/${user._id}/${routeId}`);
-      setUser(prev => ({
-        ...prev,
-        favoriteRoutes: prev.favoriteRoutes.filter(route => route._id !== routeId),
-      }));
+      await axios.delete(
+        `http://localhost:8081/api/favorite-routes/${user._id}/${routeId}`
+      );
+      await fetchFavoriteRoutes(user._id);
     } catch (err) {
       console.error("Failed to delete route:", err);
     }
@@ -96,14 +114,14 @@ const PrivateUserProfile = () => {
     setShowSettingsModal(false);
   };
 
-  const openAddModal = () => {
-    fetchLines();
-    setShowAddModal(true);
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
+  };
+
+  const openAddModal = () => {
+    fetchLines();
+    setShowAddModal(true);
   };
 
   return (
@@ -183,7 +201,7 @@ const PrivateUserProfile = () => {
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
           <Modal.Header closeButton><Modal.Title>Edit/Delete Favorite Routes</Modal.Title></Modal.Header>
           <Modal.Body>
-            {user.favoriteRoutes && user.favoriteRoutes.map((route) => (
+            {user.favoriteRoutes && user.favoriteRoutes.map(route => (
               <div key={route._id} className="mb-3 p-2 border rounded">
                 <div><strong>{route.routeName}</strong></div>
                 <div>{route.fromStation} → {route.toStation}</div>

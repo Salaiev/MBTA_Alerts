@@ -28,13 +28,13 @@ GET http://localhost:8081/api/users/getAll
 
 ###
 
-### Get User by ID (replace :id)
-GET http://localhost:8081/api/users/getUserById/REPLACE_WITH_USER_ID
+### Get User by ID 
+GET http://localhost:8081/api/users/getUserById/680b8f912c4066dd293e9359
 
 ###
 
 ### Delete User by ID
-DELETE http://localhost:8081/api/users/deleteUser/REPLACE_WITH_USER_ID
+DELETE http://localhost:8081/api/users/deleteUser/680bb5fd4b8ebf8b036b791a
 
 ###
 
@@ -43,35 +43,31 @@ DELETE http://localhost:8081/api/users/deleteAll
 
 ###
 
-### Create Favorite Route
-POST http://localhost:8081/api/favorite-routes
+### ➡️ Add Favorite Route
+POST http://localhost:8081/api/favorite-routes/680b8f912c4066dd293e9359
 Content-Type: application/json
 
 {
-  "userId": "REPLACE_WITH_USER_ID",
-  "fromStation": "place-sstat",
-  "toStation": "place-north",
-  "routeName": "Red Line"
+  "fromStation": "South Station",
+  "toStation": "Alewife",
+  "routeName": "Morning Commute"
 }
 
-###
+###  Get All Favorite Routes
+GET http://localhost:8081/api/favorite-routes/680b8f912c4066dd293e9359
 
-### Get All Favorite Routes for a User
-GET http://localhost:8081/api/favorite-routes/REPLACE_WITH_USER_ID
-
-###
-
-### Update Favorite Route by Route ID
-PUT http://localhost:8081/api/favorite-routes/REPLACE_WITH_ROUTE_ID
+## Update a Favorite Route
+PUT http://localhost:8081/api/favorite-routes/680b8f912c4066dd293e9359/680f79cc496480b3f805d3a9
 Content-Type: application/json
 
 {
-  "fromStation": "place-savin",
-  "toStation": "place-ashmt",
-  "routeName": "Updated Red Line"
+  "fromStation": "Alewife",
+  "toStation": "South Station",
+  "routeName": "Evening Return"
 }
 
-###
+###  Delete a Favorite Route
+DELETE http://localhost:8081/api/favorite-routes/680b8f912c4066dd293e9359/680f7a03496480b3f805d3bd
 
 
 ###  Delete Favorite Route
