@@ -70,3 +70,40 @@ Content-Type: application/json
 DELETE http://localhost:8081/api/favorite-routes/680b8f912c4066dd293e9359/680f7a03496480b3f805d3bd
 
 
+###  Delete Favorite Route
+DELETE http://localhost:8081/api/favorite-routes/67fcedbdbac936d3b8cd0b09
+
+
+
+
+
+
+
+
+### Create Post
+POST http://localhost:8081/api/feedback/createPost/feedback
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "comment": "blank",
+  "station": "wonderland"
+}
+
+###  Get Post
+GET http://localhost:8081/api/feedback/getPost/feedback/680bbc6111b0dc54809fa1b5
+
+###  Update Post
+PUT http://localhost:8081/api/feedback/updatePost/feedback/680bbc6111b0dc54809fa1b5
+Content-Type: application/json
+
+{
+  "username": "newTest",
+  "comment": "nada",
+  "station": "Wood island"
+}
+
+###  Delete Post
+DELETE http://localhost:8081/api/feedback/deletePost/feedback/680bbc6111b0dc54809fa1b5
+
+

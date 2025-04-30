@@ -27,17 +27,17 @@ const PrivateUserProfile = () => {
   useEffect(() => {
     const raw = getUserInfo();
     if (!raw) return;
-    // <-- here’s the fix: pull the real userId field
     const mapped = { _id: raw.userId, ...raw };
     setUser(mapped);
     setSettings({ name: mapped.name, password: "" });
     fetchFavoriteRoutes(mapped._id);
   }, []);
 
-
   const fetchFavoriteRoutes = async (userId) => {
     try {
-      const response = await axios.get(`http://localhost:8081/api/favorite-routes/${userId}`);
+      const response = await axios.get(
+        `http://localhost:8081/api/favorite-routes/${userId}`
+      );
       setUser(prev => ({
         ...prev,
         favoriteRoutes: response.data
@@ -49,7 +49,9 @@ const PrivateUserProfile = () => {
 
   const fetchLines = async () => {
     try {
-      const response = await axios.get("https://api-v3.mbta.com/routes?filter[type]=0,1");
+      const response = await axios.get(
+        "https://api-v3.mbta.com/routes?filter[type]=0,1"
+      );
       const lineList = response.data.data.map(line => ({ id: line.id, name: line.attributes.long_name }));
       setLines(lineList);
     } catch (err) {
@@ -59,7 +61,9 @@ const PrivateUserProfile = () => {
 
   const fetchStationsForLine = async (lineId, target) => {
     try {
-      const response = await axios.get(`https://api-v3.mbta.com/stops?filter[route]=${lineId}`);
+      const response = await axios.get(
+        `https://api-v3.mbta.com/stops?filter[route]=${lineId}`
+      );
       const stationList = response.data.data.map(stop => ({ id: stop.id, name: stop.attributes.name }));
       if (target === "from") setFromStations(stationList);
       else setToStations(stationList);
@@ -68,37 +72,37 @@ const PrivateUserProfile = () => {
     }
   };
 
- const handleAddRoute = async () => {
-  if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName || !user || !user._id) {
-    alert("Please fill all fields before saving.");
-    return;
-  }
+  const handleAddRoute = async () => {
+    if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName || !user || !user._id) {
+      alert("Please fill all fields before saving.");
+      return;
+    }
 
-  console.log("Submitting new route:", newRoute);
-  console.log("Submitting for user ID:", user._id);
+    console.log("Submitting new route:", newRoute);
+    console.log("Submitting for user ID:", user._id);
 
-  try {
-    const response = await axios.post(
-      `http://localhost:8081/api/favorite-routes/${user._id}`,
-      newRoute
-    );
-    console.log("Route saved successfully:", response.data);
-    await fetchFavoriteRoutes(user._id);
-    setNewRoute({ fromStation: "", toStation: "", routeName: "" });
-    setFromLine("");
-    setToLine("");
-    setShowAddModal(false);
-  } catch (err) {
-    console.error("Failed to add route:", err.response?.data || err.message);
-    alert("Failed to save route. Check console for details.");
-  }
-};
-
-  
+    try {
+      const response = await axios.post(
+        `http://localhost:8081/api/favorite-routes/${user._id}`,
+        newRoute
+      );
+      console.log("Route saved successfully:", response.data);
+      await fetchFavoriteRoutes(user._id);
+      setNewRoute({ fromStation: "", toStation: "", routeName: "" });
+      setFromLine("");
+      setToLine("");
+      setShowAddModal(false);
+    } catch (err) {
+      console.error("Failed to add route:", err.response?.data || err.message);
+      alert("Failed to save route. Check console for details.");
+    }
+  };
 
   const handleDeleteRoute = async (routeId) => {
     try {
-      await axios.delete(`http://localhost:8081/api/favorite-routes/${user._id}/${routeId}`);
+      await axios.delete(
+        `http://localhost:8081/api/favorite-routes/${user._id}/${routeId}`
+      );
       await fetchFavoriteRoutes(user._id);
     } catch (err) {
       console.error("Failed to delete route:", err);
@@ -111,16 +115,14 @@ const PrivateUserProfile = () => {
   };
 
   const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   const openAddModal = () => {
     fetchLines();
     setShowAddModal(true);
   };
-
-  if (!user) return <div><h4>Log in to view this page.</h4></div>;
 
   return (
     <div style={{ display: "flex", justifyContent: "center", marginTop: "30px" }}>

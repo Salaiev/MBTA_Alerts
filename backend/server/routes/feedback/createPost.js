@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const feedbackModel = require('../../models/FeedbackPostModel');
+const feedbackPostModel = require('../../models/FeedbackPostModel');
 const mongoose = require('mongoose');
 
 router.post('/feedback', async (req, res) =>{
@@ -11,7 +11,7 @@ router.post('/feedback', async (req, res) =>{
             return res.status(400).json({error: 'All fields are required'});
         }
 
-        const feedbackPost = new feedbackModel({ username, comment, station});
+        const feedbackPost = new feedbackPostModel({ username, comment, station});
         await feedbackPost.save();
 
         res.status(201).json({ message: 'Post created', feedbackPost });

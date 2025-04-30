@@ -4,7 +4,8 @@ import axios from 'axios';
 const BusStopSelector = ({ routeId, setSelectedStopId }) => {
   const [stops, setStops] = useState([]);
   const [loading, setLoading] = useState(true);
-
+ //  const [error, setError] = useState(null);
+  // const [selectedStopId, setSelectedStopId] = useState(null);
   useEffect(() => {
     if (!routeId) return;
 

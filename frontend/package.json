@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@mapbox/polyline": "^1.2.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
@@ -13,7 +14,9 @@
     "date-fns": "^4.1.0",
     "i": "^0.3.7",
     "jwt-decode": "^3.1.2",
+    "mapbox-gl": "^3.11.1",
     "moment": "^2.29.4",
+    "ol": "^10.5.0",
     "postcss": "^8.4.47",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",

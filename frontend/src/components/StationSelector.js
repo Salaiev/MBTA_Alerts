@@ -23,6 +23,10 @@ const StationSelector = ({ selectedLineId, setSelectedStationId }) => {
     fetchStations();
   }, [selectedLineId]);
 
+
+  // diplay a loading message or the list of stations
+  // if loading is true, show a loading message
+  // if loading is false, show the list of stations
   return (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">Select a Station</label>
