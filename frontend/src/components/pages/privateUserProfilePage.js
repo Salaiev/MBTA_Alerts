@@ -49,16 +49,13 @@ const PrivateUserProfile = () => {
     } catch (err) {
       console.error("Failed to fetch stations for line:", err);
     }
-  };
-
-
-  };
+  }; // <-- Only this one!
 
   const handleAddRoute = async () => {
     if (!newRoute.fromStation || !newRoute.toStation || !newRoute.routeName) return;
     const userId = "678a91bd9bafcee9c71265e4"; 
     console.log("Sending data:", newRoute);
-  console.log("User ID:", userId);
+    console.log("User ID:", userId);
 
     try {
       const response = await axios.post(
@@ -104,7 +101,10 @@ const PrivateUserProfile = () => {
     setShowAddModal(true);
   };
 
-  if (!user) return <div><h4>Log in to view this page.</h4></div>;
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <div style={{ display: "flex", justifyContent: "center", marginTop: "30px" }}>
