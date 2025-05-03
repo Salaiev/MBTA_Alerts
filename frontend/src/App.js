@@ -44,7 +44,7 @@ const App = () => {
             <Route exact path="/feedback" element={<Feedback />} />
             <Route exact path="/schedule" element={<MainSchedule />} />
             <Route path="/privateUserProfile" element={<PrivateUserProfile />} />
-          </Route>
+         </Route>
         </Routes>
       </UserContext.Provider>
     </>
