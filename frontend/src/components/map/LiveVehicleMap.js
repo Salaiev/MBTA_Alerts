@@ -114,7 +114,7 @@ const LiveVehicleMap = ({ routeId, stationId, direction }) => {
 
     const isBus = /^[0-9]+$/.test(routeId);
     const routeName = routeId?.split('-')[0];
-    const markerColor = isBus ? 'BFA300' : (lineColors[routeName] || '00843D');
+    const markerColor = isBus ? '8E24AA' : (lineColors[routeName] || '00843D');
     const iconName = isBus ? 'mdi:bus' : 'mdi:train-variant';
     const iconUrl = `https://api.iconify.design/${iconName}.svg?color=%23${markerColor}`;
 

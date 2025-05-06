@@ -102,13 +102,13 @@ const MainSchedule = () => {
 
         {/* Right Column - Big Map */}
         <div className="w-full lg:w-[62%] h-[650px]">
-          {activeRouteId && activeStopId && (
+         
             <LiveVehicleMap
               routeId={activeRouteId}
               stationId={activeStopId}
               direction={direction}
             />
-          )}
+          
         </div>
       </div>
     </div>
