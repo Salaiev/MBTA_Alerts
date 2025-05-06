@@ -87,13 +87,13 @@ const FeedbackPage = () => {
   // Fetch feedback posts
   useEffect(() => {
     const fetchFeedbackPosts = async () => {
-      if (!selectedStation) return;
+      //if (!selectedStation) return;
 
       setLoading(true);
       setError('');
       try {
-        const response = await axios.get('http://localhost:8081/api/feedback/feedback');
-        const filteredPosts = response.data.filter(post => post.Station === selectedStation);
+        const response = await axios.get('http://localhost:8081/api/feedback/getPost/feedback');
+        const filteredPosts = response.data.filter(post => post.Station === selectedStation); // jus6 show every single one in the database
         setFeedbackPosts(filteredPosts);
       } catch (err) {
         setError('Failed to load feedback. Please try again later.');
@@ -124,9 +124,9 @@ const FeedbackPage = () => {
         station: selectedStation
       };
 
-      await axios.post('http://localhost:8081/api/feedback/feedback', feedbackData);
+      await axios.post('http://localhost:8081/api/feedback/createPost/feedback', feedbackData);
       
-      const response = await axios.get('http://localhost:8081/api/feedback/feedback');
+      const response = await axios.get('http://localhost:8081/api/feedback/getPost/feedback');
       const filteredPosts = response.data.filter(post => post.Station === selectedStation);
       setFeedbackPosts(filteredPosts);
       

@@ -17,7 +17,7 @@ const feedbackPostSchema = new mongoose.Schema({
         default: Date.now,
     },
 
-    Station: {
+    station: {
         type: String,
         required: true
     },
