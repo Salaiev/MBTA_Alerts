@@ -21,21 +21,19 @@ const FeedbackPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Get user info on component mount
   useEffect(() => {
     const userInfo = getUserInfo();
     setUser(userInfo);
   }, []);
 
-  // Fetch lines based on transport type
   useEffect(() => {
     const fetchLines = async () => {
       setLoading(true);
       setError('');
       try {
         let endpoint = transportType === 'train' 
-          ? 'https://api-v3.mbta.com/routes?filter[type]=0,1'  // Subway routes
-          : 'https://api-v3.mbta.com/routes?filter[type]=3';   // Bus routes
+          ? 'https://api-v3.mbta.com/routes?filter[type]=0,1'
+          : 'https://api-v3.mbta.com/routes?filter[type]=3';
         
         const response = await axios.get(endpoint);
         const lineList = response.data.data.map(line => ({
@@ -56,7 +54,6 @@ const FeedbackPage = () => {
     fetchLines();
   }, [transportType]);
 
-  // Fetch stations when a line is selected
   useEffect(() => {
     const fetchStations = async () => {
       if (!selectedLine) {
@@ -84,27 +81,18 @@ const FeedbackPage = () => {
     fetchStations();
   }, [selectedLine]);
 
-  // Fetch feedback posts
   useEffect(() => {
     const fetchFeedbackPosts = async () => {
-      //if (!selectedStation) return;
-
-      setLoading(true);
-      setError('');
       try {
         const response = await axios.get('http://localhost:8081/api/feedback/getPost/feedback');
-        const filteredPosts = response.data.filter(post => post.Station === selectedStation); // jus6 show every single one in the database
-        setFeedbackPosts(filteredPosts);
+        setFeedbackPosts(response.data);
       } catch (err) {
-        setError('Failed to load feedback. Please try again later.');
         console.error('Error fetching feedback posts:', err);
-      } finally {
-        setLoading(false);
       }
     };
-
+  
     fetchFeedbackPosts();
-  }, [selectedStation]);
+  }, []); 
 
   const handleSubmitFeedback = async (e) => {
     e.preventDefault();
@@ -127,8 +115,7 @@ const FeedbackPage = () => {
       await axios.post('http://localhost:8081/api/feedback/createPost/feedback', feedbackData);
       
       const response = await axios.get('http://localhost:8081/api/feedback/getPost/feedback');
-      const filteredPosts = response.data.filter(post => post.Station === selectedStation);
-      setFeedbackPosts(filteredPosts);
+      setFeedbackPosts(response.data);
       
       setNewComment('');
       setSuccess('Your feedback has been submitted successfully!');
@@ -201,34 +188,6 @@ const FeedbackPage = () => {
             {stations.find(s => s.id === selectedStation)?.name}
           </span></h3>
           
-          {loading ? (
-            <div className="text-center my-4">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
-            </div>
-          ) : (
-            <div className="feedback-list">
-              {feedbackPosts.length === 0 ? (
-                <div className="no-feedback">
-                  No feedback yet for this station.
-                </div>
-              ) : (
-                feedbackPosts.map(post => (
-                  <Card key={post._id} className="feedback-card">
-                    <Card.Body>
-                      <Card.Title>{post.username}</Card.Title>
-                      <Card.Text>{post.comment}</Card.Text>
-                      <div className="feedback-timestamp">
-                        {new Date(post.postDate).toLocaleString()}
-                      </div>
-                    </Card.Body>
-                  </Card>
-                ))
-              )}
-            </div>
-          )}
-
           {user ? (
             <Form onSubmit={handleSubmitFeedback} className="feedback-form">
               <Form.Group className="mb-3">
@@ -268,6 +227,32 @@ const FeedbackPage = () => {
             <Alert variant="info" className="mt-4">
               Please log in to leave feedback. You can still view all feedback without logging in.
             </Alert>
+          )}
+
+          {loading ? (
+            <div className="text-center my-4">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
+          ) : (
+            <div className="feedback-list mt-4">
+              {[...feedbackPosts]
+                .filter(post => post.station === selectedStation)
+                .sort((a, b) => new Date(b.postDate) - new Date(a.postDate))
+                .map(post => (
+                  <Card key={post._id} className="feedback-card">
+                    <Card.Body>
+                      <Card.Title>{post.username}</Card.Title>
+                      <Card.Text>{post.comment}</Card.Text>
+                      <div className="feedback-timestamp">
+                        {new Date(post.postDate).toLocaleString()}
+                      </div>
+                    </Card.Body>
+                  </Card>
+                ))
+              }
+            </div>
           )}
         </div>
       )}
