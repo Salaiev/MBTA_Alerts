@@ -39,23 +39,35 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
-// ✅ Update a favorite route
+// ✅ Update a favorite route (atomic update)
 router.put('/:userId/:routeId', async (req, res) => {
   try {
     const { fromStation, toStation, routeName } = req.body;
+    if (!fromStation || !toStation || !routeName) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
 
-    const user = await User.findById(req.params.userId);
-    if (!user) return res.status(404).json({ error: 'User not found' });
+    const update = {
+      $set: {
+        'favoriteRoutes.$.fromStation': fromStation,
+        'favoriteRoutes.$.toStation': toStation,
+        'favoriteRoutes.$.routeName': routeName,
+      }
+    };
 
-    const route = user.favoriteRoutes.id(req.params.routeId);
-    if (!route) return res.status(404).json({ error: 'Route not found' });
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.userId, 'favoriteRoutes._id': req.params.routeId },
+      update,
+      { new: true, projection: { 'favoriteRoutes.$': 1 } }
+    );
 
-    route.fromStation = fromStation;
-    route.toStation = toStation;
-    route.routeName = routeName;
+    if (!user) {
+      return res.status(404).json({ error: 'User or route not found' });
+    }
 
-    await user.save();
-    res.json({ message: 'Favorite route updated', route });
+    // user.favoriteRoutes[0] is the updated route
+    const updatedRoute = user.favoriteRoutes[0];
+    return res.json({ message: 'Favorite route updated', route: updatedRoute });
   } catch (err) {
     console.error("Update route error:", err);
     res.status(500).json({ error: 'Failed to update favorite route' });
