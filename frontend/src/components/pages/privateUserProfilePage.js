@@ -10,13 +10,14 @@ const PrivateUserProfile = () => {
   const [showLogout, setShowLogout] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [newRoute, setNewRoute] = useState({
     fromStation: "",
     toStation: "",
     routeName: ""
   });
+
   const [settings, setSettings] = useState({ name: "", password: "" });
+
   const [lines, setLines] = useState([]);
   const [fromStations, setFromStations] = useState([]);
   const [toStations, setToStations] = useState([]);
@@ -118,10 +119,6 @@ const PrivateUserProfile = () => {
     }
   };
 
-  const handleSettingsSave = () => {
-    setUser(prev => ({ ...prev, name: settings.name }));
-    setShowSettingsModal(false);
-  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -218,7 +215,6 @@ const PrivateUserProfile = () => {
         </div>
 
         <div className="mt-3">
-          <Button variant="info" onClick={() => setShowSettingsModal(true)}>Settings</Button>
           <Button className="ms-2" variant="warning" onClick={() => setShowLogout(true)}>Log Out</Button>
         </div>
 
@@ -423,37 +419,6 @@ const PrivateUserProfile = () => {
                 Close
               </Button>
             )}
-          </Modal.Footer>
-        </Modal>
-
-        {/* Settings Modal */}
-        <Modal show={showSettingsModal} onHide={() => setShowSettingsModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Update Profile</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <input
-              type="text"
-              placeholder="Name"
-              className="form-control mb-2"
-              value={settings.name}
-              onChange={(e) => setSettings({ ...settings, name: e.target.value })}
-            />
-            <input
-              type="password"
-              placeholder="New Password"
-              className="form-control"
-              value={settings.password}
-              onChange={(e) => setSettings({ ...settings, password: e.target.value })}
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowSettingsModal(false)}>
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={handleSettingsSave}>
-              Save Changes
-            </Button>
           </Modal.Footer>
         </Modal>
 

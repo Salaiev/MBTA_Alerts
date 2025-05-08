@@ -4,8 +4,8 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
-const PRIMARY_COLOR = "#cc5c99";
-const SECONDARY_COLOR = "#0c0c1f";
+const PRIMARY_COLOR = "#0d6efd";
+const SECONDARY_COLOR = "#ffffff";
 const url = `${process.env.REACT_APP_BACKEND_SERVER_URI}/api/users/signup`;
 
 const Register = () => {
@@ -19,9 +19,9 @@ const Register = () => {
 
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [light, setLight] = useState(false);
+  const [light, setLight] = useState(true);
   const [bgColor, setBgColor] = useState(SECONDARY_COLOR);
-  const [bgText, setBgText] = useState("Light Mode");
+  const [bgText, setBgText] = useState("Dark mode");
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
@@ -29,28 +29,41 @@ const Register = () => {
 
   useEffect(() => {
     if (light) {
-      setBgColor("white");
+      setBgColor(SECONDARY_COLOR);
       setBgText("Dark mode");
     } else {
-      setBgColor(SECONDARY_COLOR);
+      setBgColor("#0c0c1f");
       setBgText("Light mode");
     }
   }, [light]);
 
-  let labelStyling = {
+  const labelStyling = {
     color: PRIMARY_COLOR,
     fontWeight: "bold",
-    textDecoration: "none",
   };
-  let backgroundStyling = { background: bgColor };
-  let buttonStyling = {
-    background: PRIMARY_COLOR,
-    borderStyle: "none",
-    color: bgColor,
+
+  const buttonStyling = {
+    backgroundColor: PRIMARY_COLOR,
+    border: "none",
+    color: "#fff",
+    width: "100%",
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { password } = data;
+
+    const isValidPassword =
+      password.length >= 6 &&
+      /[A-Za-z]/.test(password) &&
+      /\d/.test(password);
+
+    if (!isValidPassword) {
+      setError("Password must be at least 6 characters and include letters and numbers.");
+      return;
+    }
+
     try {
       const { data: res } = await axios.post(url, data);
       console.log("Signup success:", res);
@@ -68,14 +81,13 @@ const Register = () => {
   };
 
   return (
-    <section className="vh-100">
+    <section className="vh-100" style={{ background: bgColor }}>
       <div className="container-fluid h-custom vh-100">
-        <div
-          className="row d-flex justify-content-center align-items-center h-100"
-          style={backgroundStyling}
-        >
+        <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-            <Form>
+            <Form onSubmit={handleSubmit} className="p-4 rounded shadow" style={{ backgroundColor: "#f9f9f9" }}>
+              <h3 className="text-center mb-4" style={{ color: PRIMARY_COLOR }}>Create Account</h3>
+
               {["name", "lastname", "username", "email", "password"].map((field, i) => (
                 <Form.Group className="mb-3" controlId={`form${field}`} key={i}>
                   <Form.Label style={labelStyling}>
@@ -86,37 +98,30 @@ const Register = () => {
                     name={field}
                     onChange={handleChange}
                     placeholder={`Enter ${field}`}
+                    required
                   />
                 </Form.Group>
               ))}
-              <div className="form-check form-switch">
+
+              <div className="form-check form-switch mb-3">
                 <input
                   className="form-check-input"
                   type="checkbox"
                   id="flexSwitchCheckDefault"
-                  onChange={() => {
-                    setLight(!light);
-                  }}
+                  onChange={() => setLight(!light)}
                 />
-                <label
-                  className="form-check-label text-muted"
-                  htmlFor="flexSwitchCheckDefault"
-                >
+                <label className="form-check-label text-muted" htmlFor="flexSwitchCheckDefault">
                   {bgText}
                 </label>
               </div>
+
               {error && (
-                <div style={labelStyling} className="pt-3">
+                <div className="text-danger text-center mb-3" style={{ fontWeight: "bold" }}>
                   {error}
                 </div>
               )}
-              <Button
-                variant="primary"
-                type="submit"
-                onClick={handleSubmit}
-                style={buttonStyling}
-                className="mt-2"
-              >
+
+              <Button type="submit" style={buttonStyling}>
                 Register
               </Button>
             </Form>
