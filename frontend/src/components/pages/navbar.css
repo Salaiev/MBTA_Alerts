@@ -1,0 +1,52 @@
+/* Add to your CSS file */
+.nav-hover-effect {
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  
+  .nav-hover-effect::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #00ff88;
+    transition: width 0.3s ease;
+  }
+  
+  .nav-hover-effect:hover::after {
+    width: 100%;
+  }
+  
+  .gradient-text {
+    background: linear-gradient(45deg, #00ff88, #00ccff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 600;
+  }
+  
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  
+  .navbar {
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.9) !important;
+  }
+  
+  .dropdown-menu {
+    border: 1px solid #00ff88 !important;
+    border-radius: 8px !important;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #00ff8820 !important;
+  }

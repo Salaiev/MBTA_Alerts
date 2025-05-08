@@ -11,7 +11,6 @@ Content-Type: application/json
 }
 
 
-
 ### Login (Authenticate User)
 POST http://localhost:8081/api/users/login
 Content-Type: application/json
@@ -21,7 +20,16 @@ Content-Type: application/json
   "password":"AliNurali8587$$"
 }
 
-###
+### ✅ Update User By ID (like getUserById)
+PUT http://localhost:8081/api/users/updateUserById/68118ac5ea23c2fbe4e28aa6
+Content-Type: application/json
+
+{
+  "name": "Kutmanbek",
+  "lastname": "Salaiev",
+  "email": "ksalaiev@gmail.com",
+  "password": "Pulisic22$$"
+}
 
 ### Get All Users
 GET http://localhost:8081/api/users/getAll
@@ -29,7 +37,7 @@ GET http://localhost:8081/api/users/getAll
 ###
 
 ### Get User by ID 
-GET http://localhost:8081/api/users/getUserById/680b8f912c4066dd293e9359
+GET http://localhost:8081/api/users/getUserById/68118ac5ea23c2fbe4e28aa6
 
 ###
 
@@ -44,7 +52,7 @@ DELETE http://localhost:8081/api/users/deleteAll
 ###
 
 ### ➡️ Add Favorite Route
-POST http://localhost:8081/api/favorite-routes/680b8f912c4066dd293e9359
+POST http://localhost:8081/api/favorite-routes/68118ac5ea23c2fbe4e28aa6
 Content-Type: application/json
 
 {
@@ -54,10 +62,10 @@ Content-Type: application/json
 }
 
 ###  Get All Favorite Routes
-GET http://localhost:8081/api/favorite-routes/680b8f912c4066dd293e9359
+GET http://localhost:8081/api/favorite-routes/68118ac5ea23c2fbe4e28aa6
 
-## Update a Favorite Route
-PUT http://localhost:8081/api/favorite-routes/680b8f912c4066dd293e9359/680f79cc496480b3f805d3a9
+### Update a Favorite Route
+PUT http://localhost:8081/api/favorite-routes/68118ac5ea23c2fbe4e28aa6/6811aa826af013e16b468cd0
 Content-Type: application/json
 
 {
@@ -66,12 +74,11 @@ Content-Type: application/json
   "routeName": "Evening Return"
 }
 
+
 ###  Delete a Favorite Route
 DELETE http://localhost:8081/api/favorite-routes/680b8f912c4066dd293e9359/680f7a03496480b3f805d3bd
 
 
-###  Delete Favorite Route
-DELETE http://localhost:8081/api/favorite-routes/67fcedbdbac936d3b8cd0b09
 
 
 
