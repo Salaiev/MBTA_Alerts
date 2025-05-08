@@ -16,6 +16,8 @@ import Feedback from "./components/pages/feedbackPage";
 import MainSchedule from "./components/pages/MainSchedule";
 import RequireAuth from "./components/RequireAuth";
 import getUserInfo from "./utilities/decodeJwt";
+import SettingsPage from "./components/pages/SettingsPage";
+
 
 export const UserContext = createContext();
 
@@ -44,6 +46,8 @@ const App = () => {
             <Route exact path="/feedback" element={<Feedback />} />
             <Route exact path="/schedule" element={<MainSchedule />} />
             <Route path="/privateUserProfile" element={<PrivateUserProfile />} />
+            <Route path="/settings" element={<SettingsPage />} />
+
           </Route>
         </Routes>
       </UserContext.Provider>

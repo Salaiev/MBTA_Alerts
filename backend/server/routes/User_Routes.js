@@ -49,6 +49,37 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// ✅ Update User by ID via :id param (e.g., /updateUserById/123)
+router.put('/updateUserById/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const { name, lastname, email, password } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    if (name) user.name = name;
+    if (lastname) user.lastname = lastname;
+    if (email) user.email = email;
+
+    if (password) {
+      const isStrong = password.length >= 6 && /[A-Za-z]/.test(password) && /\d/.test(password);
+      if (!isStrong) {
+        return res.status(400).json({
+          error: "Password must be at least 6 characters and include both letters and numbers"
+        });
+      }
+      user.password = password; // bcrypt колдонуп жатсаң, хэште
+    }
+
+    await user.save();
+    res.json({ message: "User updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update user" });
+  }
+});
+
 
 // Get All Users
 router.get('/getAll', async (req, res) => {

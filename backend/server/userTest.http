@@ -11,7 +11,6 @@ Content-Type: application/json
 }
 
 
-
 ### Login (Authenticate User)
 POST http://localhost:8081/api/users/login
 Content-Type: application/json
@@ -21,7 +20,16 @@ Content-Type: application/json
   "password":"AliNurali8587$$"
 }
 
-###
+### ✅ Update User By ID (like getUserById)
+PUT http://localhost:8081/api/users/updateUserById/68118ac5ea23c2fbe4e28aa6
+Content-Type: application/json
+
+{
+  "name": "Kutmanbek",
+  "lastname": "Salaiev",
+  "email": "ksalaiev@gmail.com",
+  "password": "Pulisic22$$"
+}
 
 ### Get All Users
 GET http://localhost:8081/api/users/getAll
@@ -29,7 +37,7 @@ GET http://localhost:8081/api/users/getAll
 ###
 
 ### Get User by ID 
-GET http://localhost:8081/api/users/getUserById/680b8f912c4066dd293e9359
+GET http://localhost:8081/api/users/getUserById/68118ac5ea23c2fbe4e28aa6
 
 ###
 
