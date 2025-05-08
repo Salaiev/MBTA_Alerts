@@ -8,7 +8,7 @@ import {
   Navbar,
   NavDropdown,
 } from "react-bootstrap";
-import { PersonCircle, Gear } from "react-bootstrap-icons";
+import { PersonCircle, Gear, Star } from "react-bootstrap-icons";
 import getUserInfo from "../utilities/decodeJwt";
 
 export default function DesignNavbar() {
@@ -17,11 +17,9 @@ export default function DesignNavbar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Sync user state with localStorage
   const syncUser = () => {
     const info = getUserInfo();
     setUser(info);
-    // Redirect to /schedule after login from /login
     if (info && location.pathname === "/login") {
       navigate("/schedule");
     }
@@ -60,6 +58,11 @@ export default function DesignNavbar() {
               <Nav.Link href="/schedule" className="mx-3 nav-hover-effect"><span className="h5">Schedule</span></Nav.Link>
               <Nav.Link href="/alerts" className="mx-3 nav-hover-effect"><span className="h5">Alerts</span></Nav.Link>
               <Nav.Link href="/feedback" className="mx-3 nav-hover-effect"><span className="h5">Feedback</span></Nav.Link>
+              {user && (
+                <Nav.Link href="/privateUserProfile#favorites" className="mx-3 nav-hover-effect">
+                  <span className="h5"><Star className="me-1" size={18} />Favorites</span>
+                </Nav.Link>
+              )}
             </Nav>
 
             <Nav className="ms-auto">
@@ -102,7 +105,6 @@ export default function DesignNavbar() {
         </Container>
       </Navbar>
 
-      {/* Logout Modal */}
       <Modal show={showLogout} onHide={() => setShowLogout(false)} backdrop="static">
         <Modal.Header closeButton>
           <Modal.Title>Log Out</Modal.Title>
