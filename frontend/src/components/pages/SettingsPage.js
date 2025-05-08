@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Container, Form, Button, Alert } from "react-bootstrap";
+import { Container, Form, Button, Alert, Modal } from "react-bootstrap";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import getUserInfo from "../../utilities/decodeJwt";
 
 const SettingsPage = () => {
@@ -13,6 +14,8 @@ const SettingsPage = () => {
   const [userId, setUserId] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const user = getUserInfo();
@@ -23,7 +26,7 @@ const SettingsPage = () => {
         email: user.email || "",
         password: "",
       });
-      setUserId(user.userId); // ⚠️ ensure your token has userId
+      setUserId(user.userId);
     }
   }, []);
 
@@ -47,13 +50,22 @@ const SettingsPage = () => {
     }
 
     try {
-      await axios.put(
-        `http://localhost:8081/api/users/updateUserById/${userId}`,
-        formData
-      );
+      await axios.put(`http://localhost:8081/api/users/updateUserById/${userId}`, formData);
       setSuccess("Profile updated successfully.");
     } catch (err) {
       setError("Failed to update profile.");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await axios.delete(`http://localhost:8081/api/users/deleteUser/${userId}`);
+      localStorage.clear();
+      setShowDeleteModal(false);
+      navigate("/signup");
+    } catch (err) {
+      setError("Failed to delete account.");
+      setShowDeleteModal(false);
     }
   };
 
@@ -106,10 +118,33 @@ const SettingsPage = () => {
           />
         </Form.Group>
 
-        <Button variant="success" type="submit">
-          Update Profile
-        </Button>
+        <div className="d-flex justify-content-between">
+          <Button variant="success" type="submit">
+            Update Profile
+          </Button>
+          <Button variant="danger" onClick={() => setShowDeleteModal(true)}>
+            Delete Account
+          </Button>
+        </div>
       </Form>
+
+      {/* Delete Confirmation Modal */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} backdrop="static">
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to permanently delete your account? This action cannot be undone.
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDeleteAccount}>
+            Yes, Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
