@@ -10,7 +10,9 @@ const SettingsPage = () => {
     lastname: "",
     email: "",
     password: "",
+    confirmPassword: ""
   });
+  
   const [userId, setUserId] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -44,10 +46,17 @@ const SettingsPage = () => {
     setError("");
     setSuccess("");
 
-    if (formData.password && !validatePassword(formData.password)) {
-      setError("Password must be at least 6 characters and include letters and numbers.");
-      return;
+    if (formData.password) {
+      if (!validatePassword(formData.password)) {
+        setError("Password must be at least 6 characters and include letters and numbers.");
+        return;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords do not match.");
+        return;
+      }
     }
+    
 
     try {
       await axios.put(`http://localhost:8081/api/users/updateUserById/${userId}`, formData);
@@ -108,15 +117,27 @@ const SettingsPage = () => {
         </Form.Group>
 
         <Form.Group controlId="formPassword" className="mb-3">
-          <Form.Label>New Password (optional)</Form.Label>
-          <Form.Control
-            type="password"
-            name="password"
-            placeholder="Leave blank to keep current password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </Form.Group>
+  <Form.Label>New Password (optional)</Form.Label>
+  <Form.Control
+    type="password"
+    name="password"
+    placeholder="Leave blank to keep current password"
+    value={formData.password}
+    onChange={handleChange}
+  />
+</Form.Group>
+
+<Form.Group controlId="formConfirmPassword" className="mb-3">
+  <Form.Label>Confirm New Password</Form.Label>
+  <Form.Control
+    type="password"
+    name="confirmPassword"
+    placeholder="Re-enter new password"
+    value={formData.confirmPassword}
+    onChange={handleChange}
+  />
+</Form.Group>
+
 
         <div className="d-flex justify-content-between">
           <Button variant="success" type="submit">
